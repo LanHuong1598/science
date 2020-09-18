@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaGet;
 import vn.com.mta.science.module.model.Classification;
-import vn.com.mta.science.module.model.ResearchGroup;
 
 @Getter
 @Setter

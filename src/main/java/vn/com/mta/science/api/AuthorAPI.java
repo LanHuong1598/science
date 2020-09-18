@@ -10,13 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.mta.science.module.model.Author;
-import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.schema.AuthorCreate;
 import vn.com.mta.science.module.schema.AuthorGet;
-import vn.com.mta.science.module.schema.DocumentCreate;
-import vn.com.mta.science.module.schema.DocumentGet;
 import vn.com.mta.science.module.service.AuthorService;
-import vn.com.mta.science.module.service.DocumentService;
 
 import javax.validation.Valid;
 import java.util.List;

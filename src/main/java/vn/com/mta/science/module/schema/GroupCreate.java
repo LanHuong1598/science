@@ -4,11 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
-import vn.com.itechcorp.base.repository.service.detail.schema.SchemaCreate;
 import vn.com.mta.science.module.model.ResearchGroup;
-
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter

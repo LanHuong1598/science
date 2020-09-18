@@ -4,10 +4,8 @@ import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.AuditableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
-import vn.com.mta.science.module.model.Affiliation_;
 import vn.com.mta.science.module.model.Attachment;
 import vn.com.mta.science.module.model.Attachment_;
-import vn.com.mta.science.module.service.filter.AffiliationFilter;
 import vn.com.mta.science.module.service.filter.AttachmentFilter;
 
 import javax.persistence.criteria.Predicate;

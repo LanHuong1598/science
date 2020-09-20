@@ -24,7 +24,7 @@ public class DegreeDAOImpl extends VoidableDAOHbnImpl<Degree, Long> implements D
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
         if (baseFilter == null) return null;
 
-        if (baseFilter instanceof AffiliationFilter) {
+        if (baseFilter instanceof DegreeFilter) {
             List<Predicate> predicates = new ArrayList<>();
             DegreeFilter filter = (DegreeFilter) baseFilter;
 

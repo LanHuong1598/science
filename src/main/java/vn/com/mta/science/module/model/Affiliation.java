@@ -17,6 +17,9 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Affiliation extends VoidableGeneratedIDEntry {
 
+
+
+
     @Column(name = "name")
     private String name;
 

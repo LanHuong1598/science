@@ -15,7 +15,11 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 public class MtaJournal extends AuditableGeneratedIDEntry {
+    @Column(name = "name")
+    private String name;
 
+    @Column(name = "description")
+    private String description;
     @Column(name = "index")
     private String index;
 

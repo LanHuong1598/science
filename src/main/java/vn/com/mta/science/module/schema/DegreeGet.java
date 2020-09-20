@@ -15,7 +15,7 @@ public class DegreeGet extends SchemaGet<Degree, Long> {
 
     private String description;
 
-    private Integer type;
+    private String type;
 
     public DegreeGet(Degree group) {
         super(group);

@@ -15,7 +15,7 @@ public class DegreeCreate extends GeneratedIDSchemaCreate<Degree> {
 
     private String description;
 
-    private Integer type;
+    private String type;
 
     @Override
     public Degree toEntry() {

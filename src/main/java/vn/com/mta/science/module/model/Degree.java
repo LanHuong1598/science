@@ -24,6 +24,6 @@ public class Degree extends VoidableGeneratedIDEntry {
 
     // 1 hoc ham,. // 2 hoc vi
     @Column(name = "type")
-    private Integer type;
+    private String type;
 
 }

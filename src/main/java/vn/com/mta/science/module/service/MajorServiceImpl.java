@@ -11,7 +11,7 @@ import vn.com.mta.science.module.service.db.AffiliationDAO;
 import vn.com.mta.science.module.service.db.MajorDAO;
 
 @SuppressWarnings("Duplicates")
-@Service("majornService")
+@Service("majorService")
 public class MajorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<MajorGet, Major> implements MajorService {
 
     @Autowired

@@ -9,5 +9,5 @@ import vn.com.itechcorp.base.repository.filter.BaseFilter;
 @Setter
 @NoArgsConstructor
 public class DegreeFilter implements BaseFilter {
-    private Long type;
+    private String type;
 }

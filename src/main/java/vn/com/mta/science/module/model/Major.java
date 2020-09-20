@@ -17,8 +17,15 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Major extends VoidableGeneratedIDEntry {
 
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "parent_id")
-    private Long parentId;
+    private Integer parentId;
 
     @Column(name = "level")
     private Integer level;

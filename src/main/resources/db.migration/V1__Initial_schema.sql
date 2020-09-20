@@ -117,7 +117,7 @@ drop table if exists author cascade;
 CREATE TABLE author
 (
     id                serial primary key,
-    fullname          text                     not null,
+    fullname          text                     ,
     degree_id            text,
     academic_rank_id     text,
     gender            varchar(5),
@@ -171,6 +171,7 @@ create table group_member
     id                serial primary key,
     group_id          integer              not null references research_group (id),
     author_id         integer                  not null references author (id),
+    role_id           integer,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,

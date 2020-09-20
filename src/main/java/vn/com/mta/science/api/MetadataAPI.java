@@ -153,4 +153,38 @@ public class MetadataAPI {
         return degreeMethod.create(object, 0L);
     }
 
+    @Autowired
+    private MajorService majorService;
+
+    @Autowired
+    private GeneratedIDSchemaAPIMethod<MajorGet, Major> majorMethod;
+
+    @Bean
+    @DependsOn({"majorService"})
+    public GeneratedIDSchemaAPIMethod<MajorGet, Major> getMajorMethod() {
+        return new GeneratedIDSchemaAPIMethod<>(logger, majorService);
+    }
+
+    @GetMapping("/major")
+    public ResponseEntity<APIResponse<List<MajorGet>>> getAllMajor() {
+        return majorMethod.getList(null, 0, 0, true);
+    }
+
+    @GetMapping("/major/{id}")
+    public ResponseEntity<APIResponse<MajorGet>> getMajor(@PathVariable(name = "id") Long id) {
+        return majorMethod.getById(id);
+    }
+
+    @PostMapping("/search/major")
+    public ResponseEntity<APIResponse<List<MajorGet>>> searchMajor(
+            @Valid @RequestBody AffiliationFilter object) {
+        return majorMethod.search(null, 0, 0,  true, object);
+    }
+
+    @PostMapping("/major")
+    public ResponseEntity<APIResponse<MajorGet>> create(
+            @Valid @RequestBody MajorCreate object) {
+        return majorMethod.create(object, 0L);
+    }
+
 }

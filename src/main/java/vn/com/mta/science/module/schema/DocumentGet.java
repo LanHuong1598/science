@@ -43,7 +43,7 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private String citedNumber;
 
-    private String keyword;
+    private Collection<String> keyword;
 
     private String mtaJournalId;
 
@@ -66,7 +66,6 @@ public class DocumentGet extends SchemaGet<Document, Long> {
         this.setDocumentType(document.getDocumentType());
         this.setDoi(document.getDoi());
         this.setGroupId(document.getGroupId());
-        this.setKeyword(document.getKeyword());
         this.setLanguageId(document.getLanguageId());
         this.setMajorId(document.getMajorId());
         this.setMtaJournalId(document.getMtaJournalId());

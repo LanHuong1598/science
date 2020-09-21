@@ -44,7 +44,7 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private String citedNumber;
 
-    private String keyword;
+    private Collection<String> keyword;
 
     private String mtaJournalId;
 
@@ -64,7 +64,6 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
         document.setDocumentType(documentType);
         document.setDoi(doi);
         document.setGroupId(groupId);
-        document.setKeyword(keyword);
         document.setLanguageId(languageId);
         document.setMajorId(majorId);
         document.setMtaJournalId(mtaJournalId);

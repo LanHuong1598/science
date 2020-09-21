@@ -22,6 +22,7 @@ import vn.com.mta.science.module.service.filter.AttachmentFilter;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +63,9 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
             documentGet.setAttachmentsFullText(attachments.stream().map(AttachmentGet::new).collect(Collectors.toList()));
         }
 
+
+        String[] values = document.getKeyword().split(",");
+        documentGet.setKeyword(Arrays.stream(values).collect(Collectors.toList()));
 
         attachmentFilter.setType(1L);
         attachments = attachmentDAO.getPageOfData(attachmentFilter,null);
@@ -124,6 +128,14 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         DocumentCreate object = (DocumentCreate) entity;
 
         Document report = object.toEntry();
+
+        if (object.getKeyword() != null && !object.getKeyword().isEmpty()){
+            String ss = "";
+            for (String s : object.getKeyword())
+                ss = ss + "," + s;
+            report.setKeyword(ss);
+        }
+
         report = documentDAO.create(report, callerId);
 
         if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {

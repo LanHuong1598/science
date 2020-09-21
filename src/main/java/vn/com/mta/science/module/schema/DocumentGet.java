@@ -21,7 +21,7 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private String publisher;
 
-    private String publicationIndex;
+    private Integer publicationIndex;
 
     private String publishDate;
 

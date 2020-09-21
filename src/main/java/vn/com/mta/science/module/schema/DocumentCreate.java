@@ -22,7 +22,7 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private String publisher;
 
-    private String publicationIndex;
+    private Integer publicationIndex;
 
     private String publishDate;
 

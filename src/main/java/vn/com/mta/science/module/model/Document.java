@@ -30,7 +30,7 @@ public class Document extends VoidableGeneratedIDEntry {
     private String publisher;
 
     @Column(name = "publication_index")
-    private String publicationIndex;
+    private Integer publicationIndex;
 
     @Column(name = "publish_date")
     private String publishDate;

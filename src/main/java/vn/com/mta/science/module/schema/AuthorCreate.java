@@ -52,7 +52,7 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
 
     private Integer usefulSolutionNumber;
 
-    private String email;
+    private List<String> email;
 
     private List<Long> groupIds;
 
@@ -78,7 +78,6 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
         object.setUsefulSolutionNumber(usefulSolutionNumber);
         object.setPhone(phone);
         object.setDepthResearch(depthResearch);
-        object.setEmail(email);
         return object;
     }
 }

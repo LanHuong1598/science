@@ -27,7 +27,6 @@ public class MajorCreate extends GeneratedIDSchemaCreate<Major> {
         object.setParentId(parentId);
         object.setName(name);
         object.setDescription(description);
-
         return object;
     }
 }

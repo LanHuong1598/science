@@ -17,7 +17,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Major extends VoidableGeneratedIDEntry {
 
-
     @Column(name = "name")
     private String name;
 

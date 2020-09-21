@@ -51,8 +51,8 @@ CREATE TABLE major
     id                serial primary key,
     name              text                     not null,
     description       text,
-    parent_id         text,
-    level             text,
+    level             integer,
+    parent_id         integer,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,

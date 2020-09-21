@@ -52,7 +52,7 @@ public class AuthorGet extends SchemaGet<Author, Long> {
 
     private String depthResearch;
 
-    private String email;
+    private List<String> email;
 
     private List<Long> groupIds;
 
@@ -81,6 +81,5 @@ public class AuthorGet extends SchemaGet<Author, Long> {
         this.setUsefulSolutionNumber(object.getUsefulSolutionNumber());
         this.setPhone(object.getPhone());
         this.setDepthResearch(object.getDepthResearch());
-        this.setEmail(object.getEmail());
     }
 }

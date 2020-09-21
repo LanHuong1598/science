@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "classification")
+@Table(name = "email")
 @Setter
 @Getter
 

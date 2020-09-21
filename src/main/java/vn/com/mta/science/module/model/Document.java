@@ -60,7 +60,7 @@ public class Document extends VoidableGeneratedIDEntry {
     private Long specializationId;
 
     @Column(name = "cited_number")
-    private String citedNumber;
+    private Integer citedNumber;
 
     @Column(name = "keyword")
     private String keyword;

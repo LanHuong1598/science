@@ -41,7 +41,7 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Long specializationId;
 
-    private String citedNumber;
+    private Integer citedNumber;
 
     private Collection<String> keyword;
 

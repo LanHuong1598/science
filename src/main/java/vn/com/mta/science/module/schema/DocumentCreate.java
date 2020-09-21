@@ -42,7 +42,7 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private Long specializationId;
 
-    private String citedNumber;
+    private Integer citedNumber;
 
     private Collection<String> keyword;
 

@@ -66,5 +66,5 @@ public class Document extends VoidableGeneratedIDEntry {
     private String keyword;
 
     @Column(name = "mta_jounal_id")
-    private String mtaJournalId;
+    private Integer mtaJournalId;
 }

@@ -164,6 +164,20 @@ create table email
     last_updated_time timestamp with time zone,
     last_updated_id   integer                           default 0
 );
+drop table if exists email cascade;
+create table email
+(
+    id                serial primary key,
+    name              text,
+    description       text,
+    author_id         integer             not null references author (id),
+
+    uuid              varchar(50)              not null,
+    created_time      timestamp with time zone not null,
+    creator_id        integer                           default 0,
+    last_updated_time timestamp with time zone,
+    last_updated_id   integer                           default 0
+);
 
 drop table if exists group_member cascade;
 create table group_member

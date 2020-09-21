@@ -45,7 +45,7 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Collection<String> keyword;
 
-    private String mtaJournalId;
+    private Integer mtaJournalId;
 
     private Collection<AttachmentGet> attachmentsFullText;
 

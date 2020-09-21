@@ -5,6 +5,8 @@ import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.AuditableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.Email;
+import vn.com.mta.science.module.model.Email_;
+import vn.com.mta.science.module.service.filter.EmailAuthorFilter;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -22,12 +24,12 @@ public class EmailDAOImpl extends AuditableDAOHbnImpl<Email, Long> implements Em
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
         if (baseFilter == null) return null;
 
-        if (baseFilter instanceof EmailFilter) {
+        if (baseFilter instanceof EmailAuthorFilter) {
             List<Predicate> predicates = new ArrayList<>();
-            EmailFilter filter = (EmailFilter) baseFilter;
+            EmailAuthorFilter filter = (EmailAuthorFilter) baseFilter;
 
-//             if (filter.getAuthorId() != null)
-//                predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Email_.AUTHOR_ID), filter.getAuthorId()));
+             if (filter.getAuthorId() != null)
+                predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Email_.AUTHOR_ID), filter.getAuthorId()));
 
             return predicates;
         }

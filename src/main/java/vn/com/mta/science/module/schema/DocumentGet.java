@@ -53,6 +53,8 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Collection<Long> authors;
 
+    private Collection<CitedGet> citeds;
+
     public DocumentGet(Document document) {
         super(document);
     }

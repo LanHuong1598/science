@@ -18,8 +18,6 @@ import javax.persistence.Table;
 public class Affiliation extends VoidableGeneratedIDEntry {
 
 
-
-
     @Column(name = "name")
     private String name;
 

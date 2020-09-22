@@ -3,6 +3,7 @@ package vn.com.mta.science.module.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.exception.APIException;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
@@ -10,17 +11,23 @@ import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaC
 import vn.com.itechcorp.base.util.UuidUtil;
 import vn.com.itechcorp.telerad.file.io.FileUtil;
 import vn.com.mta.science.module.model.Attachment;
+import vn.com.mta.science.module.model.Cited;
 import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.model.DocumentMember;
 import vn.com.mta.science.module.schema.AttachmentGet;
+import vn.com.mta.science.module.schema.CitedGet;
 import vn.com.mta.science.module.schema.DocumentCreate;
 import vn.com.mta.science.module.schema.DocumentGet;
 import vn.com.mta.science.module.service.db.AttachmentDAO;
+import vn.com.mta.science.module.service.db.CitedDAO;
 import vn.com.mta.science.module.service.db.DocumentDAO;
 import vn.com.mta.science.module.service.db.DocumentMemberDAO;
 import vn.com.mta.science.module.service.filter.AttachmentFilter;
+import vn.com.mta.science.module.service.filter.CitedFilter;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,6 +53,9 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
     @Autowired
     private DocumentMemberDAO documentMemberDAO;
 
+    @Autowired
+    private CitedDAO citedDAO;
+
     @Override
     public DocumentDAO getDAO() {
         return documentDAO;
@@ -58,20 +68,27 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         attachmentFilter.setDocumentId(document.getId());
         attachmentFilter.setType(0L);
 
-        List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter,null);
+        List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
         if (attachments != null) {
             documentGet.setAttachmentsFullText(attachments.stream().map(AttachmentGet::new).collect(Collectors.toList()));
         }
 
-
-        String[] values = document.getKeyword().split(",");
-        documentGet.setKeyword(Arrays.stream(values).collect(Collectors.toList()));
+        if (document.getKeyword() != null) {
+            String[] values = document.getKeyword().split(",");
+            documentGet.setKeyword(Arrays.stream(values).collect(Collectors.toList()));
+        }
 
         attachmentFilter.setType(1L);
-        attachments = attachmentDAO.getPageOfData(attachmentFilter,null);
+        attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
         if (attachments != null) {
             documentGet.setAttachmentsAbstract(attachments.stream().map(AttachmentGet::new).collect(Collectors.toList()));
         }
+
+        CitedFilter citedFilter = new CitedFilter();
+        citedFilter.setDocumentId(document.getId());
+        List<Cited> citeds = citedDAO.getPageOfData(citedFilter, null);
+        if (citeds != null)
+            documentGet.setCiteds(citeds.stream().map(CitedGet::new).collect(Collectors.toList()));
         return documentGet;
     }
 
@@ -83,8 +100,12 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         // save file to report directory
         File attachment = new File(reportDir + "/" + UuidUtil.getNewUuid());
+        String type = file.getOriginalFilename().split("\\.")[1];
 
-        file.transferTo(attachment);
+        BufferedOutputStream stream = new BufferedOutputStream(
+                new FileOutputStream(new File(reportDir + "/" + UuidUtil.getNewUuid() + "." + type)));
+        FileCopyUtils.copy(file.getInputStream(), stream);
+        stream.close();
 
         Attachment reportAttachment = new Attachment();
         reportAttachment.setDocument_id(document.getId());
@@ -104,6 +125,12 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         // save file to report directory
         File attachment = new File(reportDir + "/" + UuidUtil.getNewUuid());
+        String type = file.getOriginalFilename().split("\\.")[1];
+
+        BufferedOutputStream stream = new BufferedOutputStream(
+                new FileOutputStream(new File(reportDir + "/" + UuidUtil.getNewUuid() + "." + type)));
+        FileCopyUtils.copy(file.getInputStream(), stream);
+        stream.close();
 
         file.transferTo(attachment);
 
@@ -129,7 +156,7 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         Document report = object.toEntry();
 
-        if (object.getKeyword() != null && !object.getKeyword().isEmpty()){
+        if (object.getKeyword() != null && !object.getKeyword().isEmpty()) {
             String ss = "";
             for (String s : object.getKeyword())
                 ss = ss + "," + s;
@@ -141,14 +168,14 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
             Set<Attachment> attachments = new HashSet<>();
 
-            for (MultipartFile file : object.getAttachmentsFullText()) {
-                try {
-                    attachments.add(saveAttachmentFullText(file, report));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+            MultipartFile file = object.getAttachmentsFullText();
+            try {
+                attachments.add(saveAttachmentFullText(file, report));
+            } catch (Exception ex) {
+                ex.printStackTrace();
 
-                }
             }
+
         }
 
         if (object.getAttachmentsAbstract() != null && !object.getAttachmentsAbstract().isEmpty()) {

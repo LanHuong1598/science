@@ -15,6 +15,13 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 public class Cited extends AuditableGeneratedIDEntry {
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "document_id", nullable = false)
     private Long document_id;
 
@@ -22,10 +29,7 @@ public class Cited extends AuditableGeneratedIDEntry {
     private String contentType;
 
     @Column(name = "content_size_kb")
-    private String contentSizeKb;
-
-    @Column(name = "type")
-    private String type;
+    private Long contentSizeKb;
     
     @Column(name = "url")
     private String url;
@@ -35,5 +39,11 @@ public class Cited extends AuditableGeneratedIDEntry {
 
     @Column(name = "issn")
     private String issn;
+
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    @Column(name = "publisher")
+    private String publisher;
 
 }

@@ -26,7 +26,7 @@ public class CitedDAOImpl extends AuditableDAOHbnImpl<Cited, Long> implements Ci
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
         if (baseFilter == null) return null;
 
-        if (baseFilter instanceof AffiliationFilter) {
+        if (baseFilter instanceof CitedFilter) {
             List<Predicate> predicates = new ArrayList<>();
             CitedFilter filter = (CitedFilter) baseFilter;
 

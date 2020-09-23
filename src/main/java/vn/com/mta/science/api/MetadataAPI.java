@@ -186,5 +186,23 @@ public class MetadataAPI {
             @Valid @RequestBody MajorCreate object) {
         return majorMethod.create(object, 0L);
     }
+    @Autowired
+    private CitedService citedService;
+
+    @Autowired
+    private GeneratedIDSchemaAPIMethod<CitedGet, Cited> citedMethods;
+
+    @Bean
+    @DependsOn({"citedService"})
+    public GeneratedIDSchemaAPIMethod<CitedGet, Cited> getCitedGeneratedIDSchemaAPIMethod() {
+        return new GeneratedIDSchemaAPIMethod<>(logger, citedService);
+    }
+
+    @PostMapping("/cited")
+    public ResponseEntity<APIResponse<CitedGet>> createCited
+            (@Valid @RequestBody CitedCreate citedCreate) {
+        return citedMethods.create(citedCreate, 0L);
+    }
+
 
 }

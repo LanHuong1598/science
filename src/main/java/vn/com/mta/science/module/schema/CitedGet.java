@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CitedGet implements Serializable {
+public class CitedGet extends SchemaGet<Cited, Long>  {
 
     private String name;
 
@@ -30,6 +30,17 @@ public class CitedGet implements Serializable {
     private String url;
 
     public CitedGet(Cited cited) {
+        setDescription(cited.getDescription());
+        setDoi(cited.getDoi());
+        setPublisher(cited.getPublisher());
+        setName(cited.getName());
+        setDocumentId(cited.getDocument_id());
+        setUrl(cited.getUrl());
+        setIssn(cited.getIssn());
+    }
+
+    @Override
+    public void parse(Cited cited) {
         setDescription(cited.getDescription());
         setDoi(cited.getDoi());
         setPublisher(cited.getPublisher());

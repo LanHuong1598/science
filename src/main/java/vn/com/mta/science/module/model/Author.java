@@ -20,10 +20,10 @@ public class Author extends VoidableGeneratedIDEntry {
     private String fullname;
 
     @Column(name = "degree_id")
-    private String degreeId;
+    private Long degreeId;
 
     @Column(name = "academic_rank_id")
-    private Integer academicRankId;
+    private Long academicRankId;
 
     @Column(name = "gender")
     private String gender;
@@ -35,10 +35,10 @@ public class Author extends VoidableGeneratedIDEntry {
     private String scientificTitle;
 
     @Column(name = "affiliation_id")
-    private Integer affiliationId;
+    private Long affiliationId;
 
     @Column(name = "major_id")
-    private Integer majorId;
+    private Long majorId;
 
     @Column(name = "orcid_id")
     private Integer orcidId;

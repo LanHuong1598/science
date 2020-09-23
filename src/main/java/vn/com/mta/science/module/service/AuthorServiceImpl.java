@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import vn.com.itechcorp.base.exception.APIException;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
+import vn.com.mta.science.module.model.Affiliation;
 import vn.com.mta.science.module.model.Author;
 import vn.com.mta.science.module.model.Email;
 import vn.com.mta.science.module.model.GroupMember;
 import vn.com.mta.science.module.schema.*;
+import vn.com.mta.science.module.service.db.AffiliationDAO;
 import vn.com.mta.science.module.service.db.AuthorDAO;
 import vn.com.mta.science.module.service.db.EmailDAO;
 import vn.com.mta.science.module.service.db.GroupMemberDAO;
@@ -31,6 +33,9 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
     @Autowired
     private EmailDAO emailDAO;
 
+    @Autowired
+    private AffiliationDAO affiliationDAO;
+
     @Override
     public AuthorDAO getDAO() {
         return authorDAO;
@@ -39,6 +44,22 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
     @Override
     public AuthorGet convert(Author author) {
         AuthorGet authorGet = new AuthorGet(author);
+
+        Affiliation dv = affiliationDAO.getById(author.getAffiliationId());
+        String donvi = dv.getName();
+        if (dv.getParentId() != null)
+        {
+            dv = affiliationDAO.getById(dv.getParentId());
+            donvi = donvi + " - " + dv.getName();
+            if (dv.getParentId() != null)
+            {
+                dv = affiliationDAO.getById(dv.getParentId());
+                donvi = donvi + " - " + dv.getName();
+            }
+        }
+
+        authorGet.setDonvi(donvi);
+
 
         GroupMemberFilter filter = new GroupMemberFilter();
         filter.setAuthorId(author.getId());

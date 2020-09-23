@@ -23,7 +23,7 @@ public class AffiliationCreate extends GeneratedIDSchemaCreate<Affiliation> {
 
     private Integer level;
 
-    private Integer parentId;
+    private Long parentId;
 
     @Override
     public Affiliation toEntry() {

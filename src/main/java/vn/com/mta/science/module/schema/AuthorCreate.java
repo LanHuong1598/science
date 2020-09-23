@@ -16,9 +16,9 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
 
     private String fullname;
 
-    private String degreeId;
+    private Long degreeId;
 
-    private Integer academicRankId;
+    private Long academicRankId;
 
     private String gender;
 
@@ -26,9 +26,9 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
 
     private String scientificTitle;
 
-    private Integer affiliationId;
+    private Long affiliationId;
 
-    private Integer majorId;
+    private Long majorId;
 
     private Integer orcidId;
 

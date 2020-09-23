@@ -23,7 +23,7 @@ public class AffiliationGet extends SchemaGet<Affiliation, Long> {
 
     private Integer level;
 
-    private Integer parentId;
+    private Long parentId;
 
     public AffiliationGet(Affiliation object) {
         super(object);

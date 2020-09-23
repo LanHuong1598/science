@@ -37,5 +37,5 @@ public class Affiliation extends VoidableGeneratedIDEntry {
     private Integer level;
 
     @Column(name = "parent_id")
-    private Integer parentId;
+    private Long parentId;
 }

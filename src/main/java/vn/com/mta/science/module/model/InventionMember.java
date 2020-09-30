@@ -19,5 +19,5 @@ public class InventionMember extends AuditableGeneratedIDEntry {
     private Long invention_id;
 
     @Column(name = "author_id")
-    private String author_id;
+    private Long author_id;
 }

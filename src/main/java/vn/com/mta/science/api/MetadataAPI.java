@@ -38,7 +38,7 @@ public class MetadataAPI {
 
     @GetMapping("/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> getAllDocument() {
-        return affiliationMethods.getList(null, 0, 0, true);
+        return affiliationMethods.getList("id", 0, 1000, false);
     }
 
     @GetMapping("/affiliation/{id}")
@@ -49,7 +49,7 @@ public class MetadataAPI {
     @PostMapping("/search/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> search(
             @Valid @RequestBody AffiliationFilter object) {
-        return affiliationMethods.search(null, 0, 0,  true, object);
+        return affiliationMethods.search("id", 0, 1000,  false, object);
     }
 
     @PostMapping("/affiliation")
@@ -74,7 +74,7 @@ public class MetadataAPI {
 
     @GetMapping("/classification")
     public ResponseEntity<APIResponse<List<ClassificationGet>>> getAllClassificationGet() {
-        return classificationMethods.getList(null, 0, 0, true);
+        return classificationMethods.getList("id", 0, 1000, true);
     }
 
     @PostMapping("/classification")
@@ -120,7 +120,7 @@ public class MetadataAPI {
 
     @GetMapping("/language")
     public ResponseEntity<APIResponse<List<LanguageGet>>> getAllLanguageGet() {
-        return languageMethods.getList(null, 0, 0, true);
+        return languageMethods.getList("id", 0, 1000, true);
     }
 
     @PostMapping("/language")
@@ -144,7 +144,7 @@ public class MetadataAPI {
     @PostMapping("/search/degree")
     public ResponseEntity<APIResponse<List<DegreeGet>>> search(
             @Valid @RequestBody DegreeFilter object) {
-        return degreeMethod.search(null, 0, 0,  true, object);
+        return degreeMethod.search("id", 0, 1000,  true, object);
     }
 
     @PostMapping("/degree")
@@ -167,7 +167,7 @@ public class MetadataAPI {
 
     @GetMapping("/major")
     public ResponseEntity<APIResponse<List<MajorGet>>> getAllMajor() {
-        return majorMethod.getList(null, 0, 0, true);
+        return majorMethod.getList("id", 0, 1000, false);
     }
 
     @GetMapping("/major/{id}")
@@ -178,7 +178,7 @@ public class MetadataAPI {
     @PostMapping("/search/major")
     public ResponseEntity<APIResponse<List<MajorGet>>> searchMajor(
             @Valid @RequestBody AffiliationFilter object) {
-        return majorMethod.search(null, 0, 0,  true, object);
+        return majorMethod.search("id", 0, 1000, false, object);
     }
 
     @PostMapping("/major")

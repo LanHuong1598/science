@@ -164,20 +164,6 @@ create table email
     last_updated_time timestamp with time zone,
     last_updated_id   integer                           default 0
 );
-drop table if exists email cascade;
-create table email
-(
-    id                serial primary key,
-    name              text,
-    description       text,
-    author_id         integer             not null references author (id),
-
-    uuid              varchar(50)              not null,
-    created_time      timestamp with time zone not null,
-    creator_id        integer                           default 0,
-    last_updated_time timestamp with time zone,
-    last_updated_id   integer                           default 0
-);
 
 drop table if exists group_member cascade;
 create table group_member
@@ -334,16 +320,23 @@ drop table if exists invention cascade;
 create table invention
 (
     id                serial primary key,
-    name              text,
+    name              text,     -- ten shtt
     description       text,
-    application_no    varchar (50),
-    filling_date      varchar (10),
-    publication_no    varchar (50),
-    publication_date  varchar (50),
-    ptc_registration_date varchar (50),
-    ptc_expired_date  varchar(30),
-    major_id          integer not null  references major(id),
-    type              varchar(50) not null ,
+    application_no    varchar (50), -- so đơn
+    filling_date      varchar (10), -- ngay cong bo đươn
+    decided_id        text,         -- quyet dinh cap bang
+    publication_no    varchar (50), -- so quyet dinh bang
+    publication_date  varchar (50), -- ngay cap bang
+    ptc_registration_date varchar (50),     -- ngay cong bo bang
+    ptc_expired_date  varchar(30),          -- ngay  het hieu luc
+    ipc_id            text,                 -- ma IPC
+    major_id          integer ,
+    type              varchar(50) ,  -- kieu cong bo
+    source            text ,    -- noi cap bang doc quyen
+    link              text, -- lien ket CSDL
+    owner             text, -- chu don
+    owner_address           text, -- dia chi chu don
+    group_id          integer , -- ma nhom ncm
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -382,7 +375,7 @@ create table invention_member
 (
     id                serial primary key,
     invention_id      integer              not null references invention (id),
-    author_id         integer                  not null references author (id),
+    author_id         integer,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -418,4 +411,61 @@ create table mta_journal
     creator_id        integer                           default 0,
     last_updated_time timestamp with time zone,
     last_updated_id   integer                           default 0
+);
+
+
+
+drop table if exists document cascade;
+create table document
+(
+    id                serial primary key,
+    name              text,
+    description       text,
+    source_id         integer             ,
+    doi               text,
+    publisher         text,
+    publication_index integer ,
+    publish_date      varchar (10),
+    language_id       integer           ,
+    title             text   ,
+    abstract_text     text    ,
+    classification_id integer      ,
+    document_type     integer      ,
+
+    group_id          integer ,
+    major_id          integer ,
+    specialization_id integer,
+    cited_number      integer default 0,
+    keyword           text,
+
+    mta_jounal_id     integer ,
+
+    cap0_id           integer ,
+    cap1_id           integer ,
+    cap2_id           integer ,
+    tacgia1_id        integer ,
+    tacgia2_id        integer ,
+    tacgia3_id        integer ,
+    tacgia4_id        integer ,
+    tacgia5_id        integer ,
+
+    group1_id         integer ,
+    group2_id         integer ,
+    group3_id         integer ,
+    group4_id         integer ,
+    group5_id         integer ,
+
+    nganh_id          integer ,
+    chuyennganh_id    integer ,
+
+
+    uuid              varchar(50)              not null,
+    created_time      timestamp with time zone not null,
+    creator_id        integer                           default 0,
+    last_updated_time timestamp with time zone,
+    last_updated_id   integer                           default 0,
+    voided            boolean default false,
+    voided_time       timestamp with time zone,
+    voided_by         integer default 0,
+    void_reason       text
 );

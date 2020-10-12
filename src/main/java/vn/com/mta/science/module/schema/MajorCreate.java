@@ -18,7 +18,7 @@ public class MajorCreate extends GeneratedIDSchemaCreate<Major> {
 
     private Integer level;
 
-    private Integer parentId;
+    private Long parentId;
 
     @Override
     public Major toEntry() {

@@ -125,7 +125,7 @@ CREATE TABLE author
     scientific_title  text,
     affiliation_id    integer ,
     major_id          integer ,
-    orcid_id          integer ,
+    orcid_id          text ,
     link_google_scholar  text,
     link_research_gate   text,
     depth_research       text,
@@ -138,6 +138,9 @@ CREATE TABLE author
     national_number   integer ,
     invention_number  integer ,
     useful_solution_number integer,
+
+    is_mta             boolean default true,
+    verified          boolean default false ,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -228,10 +231,10 @@ create table document
     id                serial primary key,
     name              text,
     description       text,
-    source_id         integer             ,
+    source_id         text,
     doi               text,
     publisher         text,
-    publication_index integer ,
+    publication_index text,
     publish_date      varchar (10),
     language_id       integer           ,
     title             text   ,
@@ -244,8 +247,10 @@ create table document
     specialization_id integer,
     cited_number      integer default 0,
     keyword           text,
+    link              text,
 
     mta_jounal_id     integer ,
+
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -415,13 +420,13 @@ create table mta_journal
 
 
 
-drop table if exists document cascade;
-create table document
+drop table if exists document_replica cascade;
+create table document_replica
 (
     id                serial primary key,
     name              text,
     description       text,
-    source_id         integer             ,
+    source_id         text,
     doi               text,
     publisher         text,
     publication_index integer ,
@@ -440,21 +445,6 @@ create table document
 
     mta_jounal_id     integer ,
 
-    cap0_id           integer ,
-    cap1_id           integer ,
-    cap2_id           integer ,
-    tacgia1_id        integer ,
-    tacgia2_id        integer ,
-    tacgia3_id        integer ,
-    tacgia4_id        integer ,
-    tacgia5_id        integer ,
-
-    group1_id         integer ,
-    group2_id         integer ,
-    group3_id         integer ,
-    group4_id         integer ,
-    group5_id         integer ,
-
     nganh_id          integer ,
     chuyennganh_id    integer ,
 
@@ -463,9 +453,48 @@ create table document
     created_time      timestamp with time zone not null,
     creator_id        integer                           default 0,
     last_updated_time timestamp with time zone,
-    last_updated_id   integer                           default 0,
-    voided            boolean default false,
-    voided_time       timestamp with time zone,
-    voided_by         integer default 0,
-    void_reason       text
+    last_updated_id   integer                           default 0
 );
+
+
+drop table if exists document_member_replica cascade;
+create table document_member_replica
+(
+    id                serial primary key,
+    document_id       integer            ,
+    author_id         integer            ,
+    affiliation_id   integer            ,
+
+    uuid              varchar(50)              not null,
+    created_time      timestamp with time zone not null,
+    creator_id        integer                           default 0,
+    last_updated_time timestamp with time zone,
+    last_updated_id   integer                           default 0
+);
+CREATE or replace FUNCTION public.insert_document_member()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS
+$BODY$
+BEGIN
+    INSERT INTO document_member_replica (id, document_id, author_id,
+                                         affiliation_id,
+                                         uuid,
+                                         created_time, creator_id,
+                                         last_updated_time, last_updated_id)
+    select new.id, new.document_id, new.author_id, author.affiliation_id,
+           new.uuid, new.created_time,
+           new.creator_id, new.last_updated_time, new.last_updated_id
+    from author where id = new.author_id;
+    RETURN NEW;
+END;
+$BODY$;
+--
+
+CREATE TRIGGER trigger_insert_document_member_replica_on_tbldocument_member_replica
+    AFTER Insert
+    ON public.document_member
+    FOR EACH ROW
+EXECUTE PROCEDURE public.insert_document_member();

@@ -1,5 +1,6 @@
 package vn.com.mta.science.module.model;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class Author extends VoidableGeneratedIDEntry {
     private Long majorId;
 
     @Column(name = "orcid_id")
-    private Integer orcidId;
+    private String orcidId;
 
     @Column(name = "link_google_scholar")
     private String linkGoogleScholar;
@@ -75,5 +76,11 @@ public class Author extends VoidableGeneratedIDEntry {
 
     @Column(name = "useful_solution_number")
     private Integer usefulSolutionNumber;
+
+    @Column(name = "is_mta")
+    private Boolean isMTA;
+
+    @Column(name = "verified")
+    private Boolean verified;
 
 }

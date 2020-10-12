@@ -24,7 +24,7 @@ public class Major extends VoidableGeneratedIDEntry {
     private String description;
 
     @Column(name = "parent_id")
-    private Integer parentId;
+    private Long parentId;
 
     @Column(name = "level")
     private Integer level;

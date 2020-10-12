@@ -21,7 +21,7 @@ public class Document extends VoidableGeneratedIDEntry {
     private String description;
 
     @Column(name = "source_id")
-    private Long sourceId;
+    private String sourceId;
 
     @Column(name = "doi")
     private String doi;
@@ -30,7 +30,7 @@ public class Document extends VoidableGeneratedIDEntry {
     private String publisher;
 
     @Column(name = "publication_index")
-    private Integer publicationIndex;
+    private String publicationIndex;
 
     @Column(name = "publish_date")
     private String publishDate;
@@ -60,11 +60,14 @@ public class Document extends VoidableGeneratedIDEntry {
     private Long specializationId;
 
     @Column(name = "cited_number")
-    private Integer citedNumber;
+    private Long citedNumber;
 
     @Column(name = "keyword")
     private String keyword;
 
+    @Column(name = "link")
+    private String link;
+
     @Column(name = "mta_jounal_id")
-    private Integer mtaJournalId;
+    private Long mtaJournalId;
 }

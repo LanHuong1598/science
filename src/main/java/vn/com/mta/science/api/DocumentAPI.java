@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.mta.science.module.model.Document;
-import vn.com.mta.science.module.schema.DocumentCreate;
-import vn.com.mta.science.module.schema.DocumentGet;
+import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.DocumentService;
 
+import javax.print.Doc;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class DocumentAPI {
 
     @GetMapping("/document")
     public ResponseEntity<APIResponse<List<DocumentGet>>> getAllDocument() {
-        return documentMethods.getList(null, 0, 0, true);
+        return documentMethods.getList("id", 0, 100000, false);
     }
 
     @GetMapping("/document/{id}")
@@ -49,5 +49,17 @@ public class DocumentAPI {
     public ResponseEntity<APIResponse<DocumentGet>> createDocument(
             @Valid @ModelAttribute("uploadForm") DocumentCreate object) {
         return documentMethods.create(object, 0L);
+    }
+
+    @PutMapping("/document")
+    public ResponseEntity<APIResponse<DocumentGet>> updateAuthor(
+            @Valid @RequestBody DocumentUpdate object) {
+        return documentMethods.update(object, 0L);
+    }
+
+    @DeleteMapping("/document/{id}")
+    public ResponseEntity<APIResponse<DocumentGet>> deleteAuthor(
+            @PathVariable(name = "id") Long id){
+        return documentMethods.delete(id, false, 0L);
     }
 }

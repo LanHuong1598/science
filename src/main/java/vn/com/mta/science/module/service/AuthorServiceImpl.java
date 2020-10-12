@@ -18,6 +18,7 @@ import vn.com.mta.science.module.service.db.EmailDAO;
 import vn.com.mta.science.module.service.db.GroupMemberDAO;
 import vn.com.mta.science.module.service.filter.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,9 +45,15 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
         return authorDAO;
     }
 
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     @Override
     public AuthorGet convert(Author author) {
         AuthorGet authorGet = new AuthorGet(author);
+
+        if (author.getBirthdate() != null)
+            authorGet.setBirthdate(dateFormat.format(author.getBirthdate()));
 
         Affiliation dv = affiliationDAO.getById(author.getAffiliationId());
         if (dv != null) {

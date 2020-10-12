@@ -6,7 +6,6 @@ import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaGet;
 import vn.com.mta.science.module.model.Author;
 
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -22,7 +21,7 @@ public class AuthorGet extends SchemaGet<Author, Long> {
 
     private String gender;
 
-    private Date birthdate;
+    private String birthdate;
 
     private String scientificTitle;
 
@@ -30,7 +29,7 @@ public class AuthorGet extends SchemaGet<Author, Long> {
 
     private Long majorId;
 
-    private Integer orcidId;
+    private String orcidId;
 
     private String linkGoogleScholar;
 
@@ -58,6 +57,10 @@ public class AuthorGet extends SchemaGet<Author, Long> {
 
     private String donvi;
 
+    private Boolean isMTA;
+
+    private Boolean verified;
+
     public AuthorGet(Author object) {
         super(object);
     }
@@ -66,7 +69,6 @@ public class AuthorGet extends SchemaGet<Author, Long> {
     public void parse(Author object) {
         this.setAcademicRankId(object.getAcademicRankId());
         this.setAffiliationId(object.getAffiliationId());
-        this.setBirthdate(object.getBirthdate());
         this.setDegreeId(object.getDegreeId());
         this.setFullname(object.getFullname());
         this.setGender(object.getGender());
@@ -83,5 +85,7 @@ public class AuthorGet extends SchemaGet<Author, Long> {
         this.setUsefulSolutionNumber(object.getUsefulSolutionNumber());
         this.setPhone(object.getPhone());
         this.setDepthResearch(object.getDepthResearch());
+        this.setIsMTA(object.getIsMTA());
+        this.setVerified(object.getVerified());
     }
 }

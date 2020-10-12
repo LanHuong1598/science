@@ -30,6 +30,7 @@ public class CitedGet extends SchemaGet<Cited, Long>  {
     private String url;
 
     public CitedGet(Cited cited) {
+        setId(cited.getId());
         setDescription(cited.getDescription());
         setDoi(cited.getDoi());
         setPublisher(cited.getPublisher());

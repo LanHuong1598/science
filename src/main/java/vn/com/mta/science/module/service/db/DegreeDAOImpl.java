@@ -28,10 +28,6 @@ public class DegreeDAOImpl extends VoidableDAOHbnImpl<Degree, Long> implements D
             List<Predicate> predicates = new ArrayList<>();
             DegreeFilter filter = (DegreeFilter) baseFilter;
 
-
-
-
-
             if (filter.getType() != null)
                 predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Degree_.TYPE), filter.getType()));
 

@@ -6,6 +6,7 @@ import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.mta.science.module.model.Author;
 
+import javax.persistence.Column;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
 
     private Long majorId;
 
-    private Integer orcidId;
+    private String orcidId;
 
     private String linkGoogleScholar;
 
@@ -51,6 +52,10 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
     private Integer inventionNumber;
 
     private Integer usefulSolutionNumber;
+
+    private Boolean isMTA;
+
+    private Boolean verified;
 
     private List<String> email;
 
@@ -78,6 +83,8 @@ public class AuthorCreate extends GeneratedIDSchemaCreate<Author> {
         object.setUsefulSolutionNumber(usefulSolutionNumber);
         object.setPhone(phone);
         object.setDepthResearch(depthResearch);
+        object.setIsMTA(isMTA);
+        object.setVerified(verified);
         return object;
     }
 }

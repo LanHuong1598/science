@@ -16,13 +16,13 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private String description;
 
-    private Long sourceId;
+    private String sourceId;
 
     private String doi;
 
     private String publisher;
 
-    private Integer publicationIndex;
+    private String publicationIndex;
 
     private String publishDate;
 
@@ -42,11 +42,13 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private Long specializationId;
 
-    private Integer citedNumber;
+    private Long citedNumber;
 
     private Collection<String> keyword;
 
-    private Integer mtaJournalId;
+    private String link;
+
+    private Long mtaJournalId;
 
     private MultipartFile attachmentsFullText;
 
@@ -73,6 +75,7 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
         document.setSourceId(sourceId);
         document.setSpecializationId(specializationId);
         document.setTitle(title);
+        document.setLink(link);
 
         return document;
     }

@@ -31,7 +31,7 @@ public class AuthorUpdate extends SchemaUpdate<Author, Long> {
 
     private Long majorId;
 
-    private Integer orcidId;
+    private String  orcidId;
 
     private String linkGoogleScholar;
 

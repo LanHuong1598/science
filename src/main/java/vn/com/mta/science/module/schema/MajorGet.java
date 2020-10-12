@@ -18,7 +18,7 @@ public class MajorGet extends SchemaGet<Major, Long> {
 
     private Integer level;
 
-    private Integer parentId;
+    private Long parentId;
 
     public MajorGet(Major object) {
         super(object);

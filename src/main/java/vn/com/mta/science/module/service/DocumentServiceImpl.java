@@ -3,25 +3,23 @@ package vn.com.mta.science.module.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.exception.APIException;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
+import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
 import vn.com.itechcorp.base.util.UuidUtil;
 import vn.com.itechcorp.telerad.file.io.FileUtil;
-import vn.com.mta.science.module.model.Attachment;
-import vn.com.mta.science.module.model.Cited;
-import vn.com.mta.science.module.model.Document;
-import vn.com.mta.science.module.model.DocumentMember;
+import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
-import vn.com.mta.science.module.service.db.AttachmentDAO;
-import vn.com.mta.science.module.service.db.CitedDAO;
-import vn.com.mta.science.module.service.db.DocumentDAO;
-import vn.com.mta.science.module.service.db.DocumentMemberDAO;
+import vn.com.mta.science.module.service.db.*;
 import vn.com.mta.science.module.service.filter.AttachmentFilter;
 import vn.com.mta.science.module.service.filter.CitedFilter;
+import vn.com.mta.science.module.service.filter.DocumentMemberFilter;
 
+import javax.print.Doc;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,12 +32,16 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
 @Service("documentService")
+@Transactional
 public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<DocumentGet, Document> implements DocumentService {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
     @Autowired
     private DocumentDAO documentDAO;
+
+    @Autowired
+    private DocumentReplicaDAO documentReplicaDAO;
 
     @Autowired
     private AttachmentDAO attachmentDAO;
@@ -49,6 +51,9 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
     @Autowired
     private DocumentMemberDAO documentMemberDAO;
+
+    @Autowired
+    private MajorDAO majorDAO;
 
     @Autowired
     private CitedDAO citedDAO;
@@ -86,6 +91,13 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         List<Cited> citeds = citedDAO.getPageOfData(citedFilter, null);
         if (citeds != null)
             documentGet.setCiteds(citeds.stream().map(CitedGet::new).collect(Collectors.toList()));
+
+        DocumentMemberFilter documentMemberFilter = new DocumentMemberFilter();
+        documentMemberFilter.setDocumentId(document.getId());
+        List<DocumentMember> documentMembers = documentMemberDAO.getPageOfData(documentMemberFilter, null);
+        if (documentMembers != null)
+            documentGet.setAuthors(documentMembers.stream().map(DocumentMember::getAuthor_id).collect(Collectors.toList()));
+
         return documentGet;
     }
 
@@ -161,6 +173,16 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         }
 
         report = documentDAO.create(report, callerId);
+        DocumentReplica documentReplica = new DocumentReplica(report);
+        if (report.getMajorId() != null) {
+            Major major = majorDAO.getById(report.getMajorId());
+            documentReplica.setChuyennganhId(report.getMajorId());
+            if (major.getParentId() != null &&  major.getParentId() != 0) {
+                documentReplica.setNganhId(major.getParentId());
+            }
+        }
+
+
 
         if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
             Set<Attachment> attachments = new HashSet<>();
@@ -170,7 +192,6 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
                 attachments.add(saveAttachmentFullText(file, report));
             } catch (Exception ex) {
                 ex.printStackTrace();
-
             }
 
         }
@@ -201,70 +222,96 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         return reportGet;
     }
-//
-//    @Override
-//    public ReportGet update(SchemaUpdate<Report, Long> entity, Long callerId) throws APIException {
-//        Report report = getDAO().getById(entity.getId());
-//        if (report == null) throw new ObjectNotFoundException("Invalid report {id}:" + entity.getId());
-//
-//        if (report.getCompleted())
-//            throw new InvalidOperationOnObjectException("Cannot update completed report {id}:" + entity.getId());
-//
-//        if (!report.getCreator().equals(callerId)) throw new APIAuthenticationException("Access is denied");
-//
-//        ReportUpdate object = (ReportUpdate) entity;
-//
-//        // remove unused files
-//        if (object.getPurgedAttachmentIds() != null && !object.getPurgedAttachmentIds().isEmpty()) {
-//            List<ReportAttachment> attachments = reportAttachmentDAO.getByReportId(report.getId());
-//            if (attachments != null) for (ReportAttachment attachment : attachments)
-//                if (object.getPurgedAttachmentIds().contains(attachment.getId())) {
-//                    deleteAttachment(attachment);
-//                    report.getAttachments().remove(attachment);
-//                }
-//        }
-//
-//        // create new files
-//        if (object.getNewAttachments() != null) for (MultipartFile file : object.getNewAttachments()) {
-//            try {
-//                report.getAttachments().add(saveAttachment(file, report));
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//                logger.error("Error saving attachment {} for report {}", file.getOriginalFilename(), report.getId());
-//            }
-//        }
-//
-//        if (object.getCompleted() == null) object.setCompleted(false);
-//
-//        if (!entity.apply(report)) convert(report);
-//        return convert(getDAO().update(report, callerId));
-//    }
-//
-//    @Override
-//    public ReportGet deleteByID(Long id, boolean purge, Long callerId) throws APIException {
-//        Report report = getDAO().getById(id);
-//        if (report == null) throw new ObjectNotFoundException("Invalid report {id}:" + id);
-//        if (!report.getCreator().equals(callerId)) throw new APIAuthenticationException("Access is denied");
-//
-//        if (report.getCompleted())
-//            return new ReportGet(getDAO().voids(report, callerId, "Delete action is called by user " + callerId));
-//
-//        return new ReportGet(deleteReport(report));
-//    }
-//
-//    @Override
-//    public byte[] getAttachment(Long id, Long attachmentId) throws APIException {
-//        ReportAttachment attachment = reportAttachmentDAO.getById(attachmentId);
-//        if (attachment == null || !attachment.getReportId().equals(id))
-//            throw new ObjectNotFoundException("Attachment is not found: " + attachmentId);
-//
-//        try {
-//            URL url = Paths.get(attachment.getUrl()).toUri().toURL();
-//            File f = new File(url.toURI());
-//            return StreamUtils.copyToByteArray(new FileInputStream(f));
-//        } catch (URISyntaxException | IOException e) {
-//            throw new APIException(e.toString());
-//        }
-//    }
+
+    @Override
+    public DocumentGet update(SchemaUpdate<Document, Long> entity, Long callerId) throws APIException {
+        DocumentUpdate object = (DocumentUpdate) entity;
+
+        Document document = documentDAO.getById(object.getId());
+
+        if (object.getKeyword() != null && !object.getKeyword().isEmpty()) {
+            String ss = "";
+            for (String s : object.getKeyword())
+                ss = ss + "," + s;
+
+            document.setKeyword(ss);
+        }
+
+        AttachmentFilter attachmentFilter = new AttachmentFilter();
+        attachmentFilter.setDocumentId(document.getId());
+        attachmentFilter.setType(0L);
+
+        List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
+        if (attachments != null) {
+            for (Attachment attachment : attachments) {
+                attachmentDAO.delete(attachment, 0L);
+            }
+        }
+
+        attachmentFilter.setType(1L);
+        attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
+        if (attachments != null) {
+            if (attachments != null) {
+                for (Attachment attachment : attachments) {
+                    attachmentDAO.delete(attachment, 0L);
+                }
+            }
+        }
+
+        CitedFilter citedFilter = new CitedFilter();
+        citedFilter.setDocumentId(document.getId());
+        List<Cited> citeds = citedDAO.getPageOfData(citedFilter, null);
+        if (citeds != null)
+            for (Cited cited : citeds) {
+                citedDAO.delete(cited, 0L);
+            }
+
+        DocumentMemberFilter documentMemberFilter = new DocumentMemberFilter();
+        documentMemberFilter.setDocumentId(document.getId());
+        List<DocumentMember> documentMembers = documentMemberDAO.getPageOfData(documentMemberFilter, null);
+        if (documentMembers != null)
+            for (DocumentMember documentMember : documentMembers) {
+                documentMemberDAO.delete(documentMember, 0L);
+            }
+
+
+        if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
+            Set<Attachment> attachmentsAdd = new HashSet<>();
+
+            MultipartFile file = object.getAttachmentsFullText();
+            try {
+                attachmentsAdd.add(saveAttachmentFullText(file, document));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+
+            }
+
+        }
+
+        if (object.getAttachmentsAbstract() != null && !object.getAttachmentsAbstract().isEmpty()) {
+            Set<Attachment> attachmentsAdd = new HashSet<>();
+
+            for (MultipartFile file : object.getAttachmentsAbstract()) {
+                try {
+                    attachmentsAdd.add(saveAttachmentAbstract(file, document));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+
+                }
+            }
+        }
+
+        if (object.getAuthors() != null && !object.getAuthors().isEmpty()) {
+            for (Long id : object.getAuthors()) {
+                DocumentMember documentMember = new DocumentMember();
+                documentMember.setAuthor_id(id);
+                documentMember.setDocument_id(document.getId());
+                documentMemberDAO.create(documentMember, document.getCreator());
+            }
+        }
+
+        return convert(getDAO().update(document, callerId));
+    }
+
 
 }

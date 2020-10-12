@@ -15,13 +15,13 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private String description;
 
-    private Long sourceId;
+    private String sourceId;
 
     private String doi;
 
     private String publisher;
 
-    private Integer publicationIndex;
+    private String publicationIndex;
 
     private String publishDate;
 
@@ -41,11 +41,13 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Long specializationId;
 
-    private Integer citedNumber;
+    private Long citedNumber;
 
     private Collection<String> keyword;
 
-    private Integer mtaJournalId;
+    private String link;
+
+    private Long mtaJournalId;
 
     private Collection<AttachmentGet> attachmentsFullText;
 
@@ -77,5 +79,6 @@ public class DocumentGet extends SchemaGet<Document, Long> {
         this.setSourceId(document.getSourceId());
         this.setSpecializationId(document.getSpecializationId());
         this.setTitle(document.getTitle());
+        this.setLink(document.getLink());
     }
 }

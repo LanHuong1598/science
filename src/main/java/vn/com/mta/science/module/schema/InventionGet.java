@@ -7,6 +7,8 @@ import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaC
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaGet;
 import vn.com.mta.science.module.model.Invention;
 
+import java.util.Collection;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -45,6 +47,10 @@ public class InventionGet extends SchemaGet<Invention, Long> {
     private Long groupId;
 
     private String type;
+
+    private Collection<Long> authors;
+
+    private String image;
 
     public InventionGet(Invention invention) {
         super(invention);

@@ -16,8 +16,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class DocumentMember extends AuditableGeneratedIDEntry {
     @Column(name = "document_id", nullable = false)
-    private Long document_id;
+    private Long documentId;
 
     @Column(name = "author_id")
-    private Long author_id;
+    private Long authorId;
 }

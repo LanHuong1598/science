@@ -1,13 +1,13 @@
 package vn.com.mta.science.module.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.model.VoidableGeneratedIDEntry;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 
 @Getter
@@ -70,4 +70,11 @@ public class Document extends VoidableGeneratedIDEntry {
 
     @Column(name = "mta_jounal_id")
     private Long mtaJournalId;
+
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(name = "document_member",
+            joinColumns = @JoinColumn(name = "document_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
 }

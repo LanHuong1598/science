@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import vn.com.mta.science.config.interceptor.HibernateStatisticsInterceptor;
 
 import javax.sql.DataSource;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class)
 public class ScienceApplication {
 

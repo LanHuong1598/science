@@ -7,15 +7,9 @@ import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDS
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
 import vn.com.itechcorp.base.util.Pair;
-import vn.com.mta.science.module.model.Affiliation;
-import vn.com.mta.science.module.model.Author;
-import vn.com.mta.science.module.model.Email;
-import vn.com.mta.science.module.model.GroupMember;
+import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
-import vn.com.mta.science.module.service.db.AffiliationDAO;
-import vn.com.mta.science.module.service.db.AuthorDAO;
-import vn.com.mta.science.module.service.db.EmailDAO;
-import vn.com.mta.science.module.service.db.GroupMemberDAO;
+import vn.com.mta.science.module.service.db.*;
 import vn.com.mta.science.module.service.filter.*;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +34,9 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
     @Autowired
     private AffiliationDAO affiliationDAO;
 
+    @Autowired
+    private MajorDAO majorDAO;
+
     @Override
     public AuthorDAO getDAO() {
         return authorDAO;
@@ -55,23 +52,43 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
         if (author.getBirthdate() != null)
             authorGet.setBirthdate(dateFormat.format(author.getBirthdate()));
 
-        Affiliation dv = affiliationDAO.getById(author.getAffiliationId());
-        if (dv != null) {
-            String donvi = dv.getName();
-            if (dv.getParentId() != null) {
-                dv = affiliationDAO.getById(dv.getParentId());
-                if (dv != null) {
-                    donvi = donvi + " - " + dv.getName();
-                    if (dv.getParentId() != null) {
-                        dv = affiliationDAO.getById(dv.getParentId());
-                        if (dv != null) donvi = donvi + " - " + dv.getName();
+        if (author.getIsMTA()) {
+            Affiliation dv = affiliationDAO.getById(author.getAffiliationId());
+            if (dv != null) {
+                String donvi = dv.getName();
+                if (dv.getParentId() != null) {
+                    dv = affiliationDAO.getById(dv.getParentId());
+                    if (dv != null) {
+                        authorGet.setParentAffiliationId(dv.getId());
+                        donvi = donvi + " - " + dv.getName();
+                        if (dv.getParentId() != null) {
+                            dv = affiliationDAO.getById(dv.getParentId());
+                            if (dv != null) donvi = donvi + " - " + dv.getName();
+                        }
+                    }
+                }
+
+                authorGet.setDonvi(donvi);
+
+            }
+        }
+        else {
+            authorGet.setDonvi(author.getDepthResearch());
+        }
+
+        if (author.getMajorId() != null)
+        {
+            Major chuyennganh = majorDAO.getById(author.getMajorId());
+            if (chuyennganh != null) {
+                if (chuyennganh.getParentId() != null && chuyennganh.getParentId() != 0){
+                    Major nganh = majorDAO.getById(chuyennganh.getParentId());
+                    if (nganh != null){
+                        authorGet.setParentMajorId(nganh.getId());
                     }
                 }
             }
-
-            authorGet.setDonvi(donvi);
-
         }
+
         GroupMemberFilter filter = new GroupMemberFilter();
         filter.setAuthorId(author.getId());
         List<GroupMember> ids = groupMemberDAO.getPageOfData(filter, null);

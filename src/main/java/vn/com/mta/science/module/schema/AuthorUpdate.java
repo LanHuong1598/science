@@ -57,6 +57,10 @@ public class AuthorUpdate extends SchemaUpdate<Author, Long> {
 
     private List<Long> groupIds;
 
+    private Boolean isMTA;
+
+    private Boolean verified;
+
     @Override
     public boolean apply(Author object) {
         boolean modified = false;
@@ -114,6 +118,15 @@ public class AuthorUpdate extends SchemaUpdate<Author, Long> {
             modified = true;
         }
 
+        if (isMTA != null) {
+            object.setIsMTA(isMTA);
+            modified = true;
+        }
+
+        if (verified != null) {
+            object.setVerified(verified);
+            modified = true;
+        }
         return modified;
     }
 }

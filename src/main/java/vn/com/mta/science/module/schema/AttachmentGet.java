@@ -17,9 +17,12 @@ public class AttachmentGet implements Serializable {
 
     private long contentSizeKb;
 
+    private String url;
+
     public AttachmentGet(Attachment att) {
         id = att.getId();
         contentType = att.getContentType();
         contentSizeKb = att.getContentSizeKb();
+        url = att.getUrl();
     }
 }

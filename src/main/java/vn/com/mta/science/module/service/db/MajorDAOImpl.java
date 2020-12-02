@@ -8,6 +8,7 @@ import vn.com.mta.science.module.model.Affiliation_;
 import vn.com.mta.science.module.model.Major;
 import vn.com.mta.science.module.model.Major_;
 import vn.com.mta.science.module.service.filter.AffiliationFilter;
+import vn.com.mta.science.module.service.filter.MajorFilter;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public class MajorDAOImpl extends VoidableDAOHbnImpl<Major, Long> implements Maj
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
         if (baseFilter == null) return null;
 
-        if (baseFilter instanceof AffiliationFilter) {
+        if (baseFilter instanceof MajorFilter) {
             List<Predicate> predicates = new ArrayList<>();
-            AffiliationFilter filter = (AffiliationFilter) baseFilter;
+            MajorFilter filter = (MajorFilter) baseFilter;
 
             if (filter.getLevel() != null)
                 predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Major_.LEVEL), filter.getLevel()));

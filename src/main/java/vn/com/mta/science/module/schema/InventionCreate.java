@@ -3,6 +3,7 @@ package vn.com.mta.science.module.schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.mta.science.module.model.Affiliation;
 import vn.com.mta.science.module.model.Invention;
@@ -50,6 +51,8 @@ public class InventionCreate extends GeneratedIDSchemaCreate<Invention> {
     private String type;
 
     private Collection<Long> authors;
+
+    private MultipartFile image;
 
     @Override
     public Invention toEntry() {

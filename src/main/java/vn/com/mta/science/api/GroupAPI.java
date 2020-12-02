@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIResponse;
@@ -35,16 +36,22 @@ public class GroupAPI {
         return new GeneratedIDSchemaAPIMethod<>(logger, groupService);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).GROUP_GET)")
     @GetMapping("/group")
     public ResponseEntity<APIResponse<List<GroupGet>>> getAllDocument() {
         return groupMethods.getList(null, 0, 0, true);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).GROUP_GET)")
     @GetMapping("/group/{id}")
     public ResponseEntity<APIResponse<GroupGet>> getDocumentById(@PathVariable(name = "id") Long id) {
         return groupMethods.getById(id);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).GROUP_ADD)")
     @PostMapping("/group")
     public ResponseEntity<APIResponse<GroupGet>> createDocument(
             @Valid @RequestBody GroupCreate object) {

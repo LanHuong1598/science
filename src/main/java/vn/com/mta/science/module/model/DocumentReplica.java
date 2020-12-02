@@ -3,6 +3,7 @@ package vn.com.mta.science.module.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.com.itechcorp.base.repository.model.AuditableDbEntry;
 import vn.com.itechcorp.base.repository.model.VoidableGeneratedIDEntry;
 
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Entity
 @Table(name = "document_replica")
-public class DocumentReplica extends VoidableGeneratedIDEntry {
+public class DocumentReplica extends AuditableDbEntry<Long> {
 
     @Column(name = "description")
     private String description;
@@ -68,15 +69,6 @@ public class DocumentReplica extends VoidableGeneratedIDEntry {
     @Column(name = "mta_jounal_id")
     private Long mtaJournalId;
 
-    @Column(name = "cap0_id")
-    private Long cap0Id;
-
-    @Column(name = "cap1_id")
-    private Long cap1Id;
-
-    @Column(name = "cap2_id")
-    private Long cap2Id;
-
     @Column(name = "nganh_id")
     private Long nganhId;
 
@@ -84,22 +76,23 @@ public class DocumentReplica extends VoidableGeneratedIDEntry {
     private Long chuyennganhId;
 
     public DocumentReplica(Document document) {
-        DocumentReplica documentReplica = new DocumentReplica();
-        documentReplica.setDescription(document.getDescription());
-        documentReplica.setAbstractText(document.getAbstractText());
-        documentReplica.setCitedNumber(document.getCitedNumber());
-        documentReplica.setClassificationId(document.getClassificationId());
-        documentReplica.setDocumentType(document.getDocumentType());
-        documentReplica.setDoi(document.getDoi());
-        documentReplica.setGroupId(document.getGroupId());
-        documentReplica.setLanguageId(document.getLanguageId());
-        documentReplica.setMajorId(document.getMajorId());
-        documentReplica.setMtaJournalId(document.getMtaJournalId());
-        documentReplica.setPublicationIndex(document.getPublicationIndex());
-        documentReplica.setPublishDate(document.getPublishDate());
-        documentReplica.setPublisher(document.getPublisher());
-        documentReplica.setSourceId(document.getSourceId());
-        documentReplica.setSpecializationId(document.getSpecializationId());
-        documentReplica.setTitle(document.getTitle());
+        this.setId(document.getId());
+        this.setDescription(document.getDescription());
+        this.setAbstractText(document.getAbstractText());
+        this.setCitedNumber(document.getCitedNumber());
+        this.setClassificationId(document.getClassificationId());
+        this.setDocumentType(document.getDocumentType());
+        this.setDoi(document.getDoi());
+        this.setGroupId(document.getGroupId());
+        this.setLanguageId(document.getLanguageId());
+        this.setMajorId(document.getMajorId());
+        this.setMtaJournalId(document.getMtaJournalId());
+        this.setPublicationIndex(document.getPublicationIndex());
+        this.setPublishDate(document.getPublishDate());
+        this.setPublisher(document.getPublisher());
+        this.setSourceId(document.getSourceId());
+        this.setSpecializationId(document.getSpecializationId());
+        this.setTitle(document.getTitle());
+
     }
 }

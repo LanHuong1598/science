@@ -27,7 +27,11 @@ public class AuthorGet extends SchemaGet<Author, Long> {
 
     private Long affiliationId;
 
+    private Long parentAffiliationId;
+
     private Long majorId;
+
+    private Long parentMajorId;
 
     private String orcidId;
 

@@ -47,11 +47,13 @@ public class DocumentUpdate extends SchemaUpdate<Document, Long> {
 
     private Collection<String> keyword;
 
+    private String link;
+
     private Long mtaJournalId;
 
-    private MultipartFile attachmentsFullText;
-
     private Collection<MultipartFile> attachmentsAbstract;
+
+    private MultipartFile attachmentsFullText;
 
     private Collection<Long> authors;
 
@@ -123,6 +125,11 @@ public class DocumentUpdate extends SchemaUpdate<Document, Long> {
         }
         if (mtaJournalId != null) {
             object.setMtaJournalId(mtaJournalId);
+            modified = true;
+        }
+
+        if (link != null) {
+            object.setLink(link);
             modified = true;
         }
 

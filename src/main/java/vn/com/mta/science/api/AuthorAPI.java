@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIListResponseHeader;
@@ -45,34 +46,46 @@ public class AuthorAPI {
         return new GeneratedIDSchemaAPIMethod<>(logger, authorService);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_GET)")
     @GetMapping("/author")
     public ResponseEntity<APIResponse<List<AuthorGet>>> getAllDocument() {
         return authorMethod.getList("id", 0, 10000 , false);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_GET)")
     @GetMapping("/author/{id}")
     public ResponseEntity<APIResponse<AuthorGet>> getDocumentById(@PathVariable(name = "id") Long id) {
         return authorMethod.getById(id);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_ADD)")
     @PostMapping("/author")
     public ResponseEntity<APIResponse<AuthorGet>> createAuthor(
             @Valid @RequestBody AuthorCreate object) {
         return authorMethod.create(object, 0L);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_EDIT)")
     @PutMapping("/author")
     public ResponseEntity<APIResponse<AuthorGet>> updateAuthor(
             @Valid @RequestBody AuthorUpdate object) {
         return authorMethod.update(object, 0L);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_DELETE)")
     @DeleteMapping("/author/{id}")
     public ResponseEntity<APIResponse<AuthorGet>> deleteAuthor(
             @PathVariable(name = "id") Long id){
         return authorMethod.delete(id, false, 0L);
     }
 
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_GET)")
     @PostMapping("/search/authorByAff")
     public ResponseEntity<APIResponse<Collection<AuthorGet>>> searchAuthorByAff(
             @Valid @RequestBody AuthorByAffFilter filter) {

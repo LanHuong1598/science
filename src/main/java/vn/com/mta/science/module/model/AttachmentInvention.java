@@ -22,10 +22,10 @@ public class AttachmentInvention extends AuditableGeneratedIDEntry {
     private String contentType;
 
     @Column(name = "content_size_kb")
-    private String contentSizeKb;
+    private Long contentSizeKb;
 
     @Column(name = "type")
-    private String type;
+    private Long type;
 
     @Column(name = "url")
     private String url;

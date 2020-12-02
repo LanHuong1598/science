@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.exception.APIException;
+import vn.com.itechcorp.base.repository.dao.PaginationInfo;
+import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
@@ -15,11 +17,10 @@ import vn.com.itechcorp.telerad.file.io.FileUtil;
 import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.db.*;
-import vn.com.mta.science.module.service.filter.AttachmentFilter;
-import vn.com.mta.science.module.service.filter.CitedFilter;
-import vn.com.mta.science.module.service.filter.DocumentMemberFilter;
+import vn.com.mta.science.module.service.filter.*;
 
 import javax.print.Doc;
+import javax.print.DocFlavor;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,10 +54,26 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
     private DocumentMemberDAO documentMemberDAO;
 
     @Autowired
+    private DocumentMemberReplicaDAO documentMemberReplicaDAO;
+
+    @Autowired
     private MajorDAO majorDAO;
 
     @Autowired
     private CitedDAO citedDAO;
+
+    @Autowired
+    private AuthorDAO authorDAO;
+
+    @Autowired
+    private ClassificationDAO classificationDAO;
+
+    @Autowired
+    private DocumentTypeDAO documentTypeDAO;
+
+    @Autowired
+    private ResearchGroupDAO researchGroupDAO;
+
 
     @Override
     public DocumentDAO getDAO() {
@@ -72,7 +89,8 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
         if (attachments != null) {
-            documentGet.setAttachmentsFullText(attachments.stream().map(AttachmentGet::new).collect(Collectors.toList()));
+            documentGet.setAttachmentsFullText(new AttachmentGet(attachments.get(0)));
+            documentGet.setUrl(attachments.get(0).getUrl());
         }
 
         if (document.getKeyword() != null) {
@@ -96,9 +114,145 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         documentMemberFilter.setDocumentId(document.getId());
         List<DocumentMember> documentMembers = documentMemberDAO.getPageOfData(documentMemberFilter, null);
         if (documentMembers != null)
-            documentGet.setAuthors(documentMembers.stream().map(DocumentMember::getAuthor_id).collect(Collectors.toList()));
+            documentGet.setAuthors(documentMembers.stream().map(DocumentMember::getAuthorId).collect(Collectors.toList()));
+
+//        if (document.getMajorId() != null) {
+//            Major major = majorDAO.getById(document.getMajorId());
+//            if (major != null) {
+//                if (major.getParentId() != null && major.getParentId() != 0){
+//                    major = majorDAO.getById(major.getParentId());
+//                    if (major != null){
+//                        documentGet.setParentMajorId(major.getId());
+//                    }
+//                }
+//            }
+//        }
 
         return documentGet;
+    }
+
+    @Override
+    public List<DocumentGet> getPageOfData(BaseFilter filter, PaginationInfo pageinfo) {
+        if (filter instanceof DocumentTotalFilter) {
+
+            DocumentTotalFilter ft = (DocumentTotalFilter) filter;
+
+            DocumentFilter lt = new DocumentFilter();
+
+            if (ft.getAuthorId() != null && !ft.getAuthorId().equals("")) {
+                Set<String> author = new HashSet<>();
+                author.add(ft.getAuthorId());
+                lt.setAuthorId(author);
+            }
+
+            if (ft.getClassificationId() != null) {
+                Set<Long> author = new HashSet<>();
+
+                Classification classification = classificationDAO.getById(ft.getClassificationId());
+                if (classification != null) {
+                    if (classification.getName().equals("--")) {
+                        author.addAll(classificationDAO.getAll().
+                                stream().map(Classification::getId).collect(Collectors.toList()));
+                    }
+                }
+
+                author.add(ft.getClassificationId());
+                lt.setClassificationId(author);
+            }
+
+            if (ft.getDocumentType() != null ) {
+                Set<Long> author = new HashSet<>();
+
+                DocumentType documentType = documentTypeDAO.getById(ft.getDocumentType());
+                if (documentType != null) {
+                    if (documentType.getName().equals("--")) {
+                        author.addAll(documentTypeDAO.getAll().stream().map(DocumentType::getId).collect(Collectors.toList()));
+                    }
+                }
+
+                author.add(ft.getDocumentType());
+                lt.setDocumentType(author);
+            }
+
+            if (ft.getGroupId() != null) {
+                Set<Long> author = new HashSet<>();
+
+                ResearchGroup group = researchGroupDAO.getById(ft.getGroupId());
+                if (group != null) {
+                    if (group.getName().equals("--")) {
+                        author.addAll(researchGroupDAO.getAll().stream().map(ResearchGroup::getId).collect(Collectors.toList()));
+                    }
+                }
+
+                author.add(ft.getGroupId());
+                lt.setGroupId(author);
+            }
+
+            if (ft.getKeyword() != null && !ft.getKeyword().equals("") ) {
+//                Set<String> author = new HashSet<>();
+//                author.add(ft.getKeyword());
+                lt.setKeyword(ft.getKeyword());
+            }
+
+            if (ft.getMajorId() != null) {
+                Set<Long> author = new HashSet<>();
+
+                Major group = majorDAO.getById(ft.getMajorId());
+                if (group != null) {
+                    if (group.getName().equals("--") && group.getLevel() == 0) {
+                        MajorFilter majorFilter = new MajorFilter();
+                        majorFilter.setLevel(0L);
+                        author.addAll(majorDAO.getPageOfData(majorFilter, null).stream().map(Major::getId).collect(Collectors.toList()));
+                    }
+                    if (group.getName().equals("--") && group.getLevel() == 1) {
+                        MajorFilter majorFilter = new MajorFilter();
+                        majorFilter.setLevel(1L);
+                        majorFilter.setParentId(group.getParentId());
+                        author.addAll(majorDAO.getPageOfData(majorFilter, null).stream().map(Major::getId).collect(Collectors.toList()));
+                    }
+                }
+
+                author.add(ft.getMajorId());
+                lt.setMajorId(author);
+            }
+
+            if (ft.getSpecializationId() != null) {
+                Set<Long> author = new HashSet<>();
+
+                Major group = majorDAO.getById(ft.getSpecializationId());
+                if (group != null) {
+                    if (group.getName().equals("--") && group.getLevel() == 0) {
+                        MajorFilter majorFilter = new MajorFilter();
+                        majorFilter.setLevel(0L);
+                        author.addAll(majorDAO.getPageOfData(majorFilter, null).stream().map(Major::getId).collect(Collectors.toList()));
+                    }
+                    if (group.getName().equals("--") && group.getLevel() == 1) {
+                        Major group1 = majorDAO.getById(group.getParentId());
+                        if (!group1.getName().equals("--")) {
+                            MajorFilter majorFilter = new MajorFilter();
+                            majorFilter.setLevel(1L);
+                            majorFilter.setParentId(group.getParentId());
+                            author.addAll(majorDAO.getPageOfData(majorFilter, null).stream().map(Major::getId).collect(Collectors.toList()));
+                        }
+                    }
+                }
+
+                if (group.getName().equals("--") && group.getLevel() == 1) {
+                    Major group1 = majorDAO.getById(group.getParentId());
+                    if (!group1.getName().equals("--")) {
+                        author.add(ft.getSpecializationId());
+                        lt.setSpecializationId(author);
+                    }
+                } else {
+                    author.add(ft.getSpecializationId());
+                    lt.setSpecializationId(author);
+                }
+            }
+
+            return super.getPageOfData(lt, pageinfo);
+
+        }
+        return null;
     }
 
     private Attachment saveAttachmentFullText(MultipartFile file, Document document) throws Exception {
@@ -108,11 +262,12 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         String reportDir = FileUtil.changeDir(dateDir, document.getId().toString());
 
         // save file to report directory
-        File attachment = new File(reportDir + "/" + UuidUtil.getNewUuid());
         String type = file.getOriginalFilename().split("\\.")[1];
 
+        File attachment = new File(reportDir + "/" + file.getOriginalFilename());
+
         BufferedOutputStream stream = new BufferedOutputStream(
-                new FileOutputStream(new File(reportDir + "/" + UuidUtil.getNewUuid() + "." + type)));
+                new FileOutputStream(attachment));
         FileCopyUtils.copy(file.getInputStream(), stream);
         stream.close();
 
@@ -137,7 +292,7 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         String type = file.getOriginalFilename().split("\\.")[1];
 
         BufferedOutputStream stream = new BufferedOutputStream(
-                new FileOutputStream(new File(reportDir + "/" + UuidUtil.getNewUuid() + "." + type)));
+                new FileOutputStream(new File(reportDir + "/" + file.getName() + "." + type)));
         FileCopyUtils.copy(file.getInputStream(), stream);
         stream.close();
 
@@ -169,20 +324,23 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
             String ss = "";
             for (String s : object.getKeyword())
                 ss = ss + "," + s;
+
+            ss = ss.substring(1);
             report.setKeyword(ss);
         }
 
         report = documentDAO.create(report, callerId);
+
         DocumentReplica documentReplica = new DocumentReplica(report);
         if (report.getMajorId() != null) {
             Major major = majorDAO.getById(report.getMajorId());
             documentReplica.setChuyennganhId(report.getMajorId());
-            if (major.getParentId() != null &&  major.getParentId() != 0) {
+            if (major.getParentId() != null && major.getParentId() != 0) {
                 documentReplica.setNganhId(major.getParentId());
             }
         }
 
-
+        documentReplicaDAO.create(documentReplica, 0L);
 
         if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
             Set<Attachment> attachments = new HashSet<>();
@@ -212,9 +370,17 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         if (object.getAuthors() != null && !object.getAuthors().isEmpty()) {
             for (Long id : object.getAuthors()) {
                 DocumentMember documentMember = new DocumentMember();
-                documentMember.setAuthor_id(id);
-                documentMember.setDocument_id(report.getId());
+                documentMember.setAuthorId(id);
+                documentMember.setDocumentId(report.getId());
                 documentMemberDAO.create(documentMember, report.getCreator());
+
+                DocumentMemberReplica documentMemberReplica = new DocumentMemberReplica();
+                documentMemberReplica.setAuthorId(id);
+                documentMemberReplica.setDocumentId(report.getId());
+                Author author = authorDAO.getById(id);
+                if (author != null)
+                    documentMemberReplica.setAffilicationId(author.getAffiliationId());
+                documentMemberReplicaDAO.create(documentMemberReplica, 0L);
             }
         }
 
@@ -237,20 +403,20 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
             document.setKeyword(ss);
         }
 
-        AttachmentFilter attachmentFilter = new AttachmentFilter();
-        attachmentFilter.setDocumentId(document.getId());
-        attachmentFilter.setType(0L);
+        if (object.getAttachmentsFullText() != null) {
+            AttachmentFilter attachmentFilter = new AttachmentFilter();
+            attachmentFilter.setDocumentId(document.getId());
+            attachmentFilter.setType(0L);
 
-        List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
-        if (attachments != null) {
-            for (Attachment attachment : attachments) {
-                attachmentDAO.delete(attachment, 0L);
+            List<Attachment> attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
+            if (attachments != null) {
+                for (Attachment attachment : attachments) {
+                    attachmentDAO.delete(attachment, 0L);
+                }
             }
-        }
 
-        attachmentFilter.setType(1L);
-        attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
-        if (attachments != null) {
+            attachmentFilter.setType(1L);
+            attachments = attachmentDAO.getPageOfData(attachmentFilter, null);
             if (attachments != null) {
                 for (Attachment attachment : attachments) {
                     attachmentDAO.delete(attachment, 0L);
@@ -274,42 +440,26 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
                 documentMemberDAO.delete(documentMember, 0L);
             }
 
-
-        if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
+        if (object.getAttachmentsFullText() != null) {
             Set<Attachment> attachmentsAdd = new HashSet<>();
-
             MultipartFile file = object.getAttachmentsFullText();
             try {
                 attachmentsAdd.add(saveAttachmentFullText(file, document));
             } catch (Exception ex) {
                 ex.printStackTrace();
-
-            }
-
-        }
-
-        if (object.getAttachmentsAbstract() != null && !object.getAttachmentsAbstract().isEmpty()) {
-            Set<Attachment> attachmentsAdd = new HashSet<>();
-
-            for (MultipartFile file : object.getAttachmentsAbstract()) {
-                try {
-                    attachmentsAdd.add(saveAttachmentAbstract(file, document));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-
-                }
             }
         }
 
         if (object.getAuthors() != null && !object.getAuthors().isEmpty()) {
             for (Long id : object.getAuthors()) {
                 DocumentMember documentMember = new DocumentMember();
-                documentMember.setAuthor_id(id);
-                documentMember.setDocument_id(document.getId());
+                documentMember.setAuthorId(id);
+                documentMember.setDocumentId(document.getId());
                 documentMemberDAO.create(documentMember, document.getCreator());
             }
         }
 
+        object.apply(document);
         return convert(getDAO().update(document, callerId));
     }
 

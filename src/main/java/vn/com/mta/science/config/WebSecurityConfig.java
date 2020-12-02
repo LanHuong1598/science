@@ -11,17 +11,31 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import vn.com.mta.science.module.user.auth.ItechUserDetailsService;
+import vn.com.mta.science.module.user.auth.ItechUserPasswordEncoder;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private ItechUserDetailsService itechUserDetailsService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(itechUserDetailsService).passwordEncoder(ItechUserPasswordEncoder.getInstance().getEncoder());
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource()).and()
                 .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/secured/ws/rest/v1/stats" , "/secured/ws/rest/v1/login", "/secured/ws/rest/v1/api/download ", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/v2/api-docs/**", "/secured/ws/rest/v1/test").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .httpBasic();
     }
 

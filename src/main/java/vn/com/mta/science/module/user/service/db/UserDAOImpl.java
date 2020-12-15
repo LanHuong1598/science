@@ -58,7 +58,7 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
     }
 
     @Override
-    @Cacheable(value = "userCacheByName", key = "#username", unless = "#result == null")
+    @Cacheable(value = "userCacheByUserName", key = "#username", unless = "#result == null")
     public User getByUserName(String username) {
         CriteriaInfo criteriaInfo = getBaseCriteriaInfo();
         criteriaInfo.getCriteria().where(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(User_.USERNAME), username));
@@ -76,7 +76,7 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "userCacheByName", key = "#entity.username"),
+            @CacheEvict(value = "userCacheByUserName", key = "#entity.username"),
             @CacheEvict(value = "userCacheById", key = "#entity.id")
     })
     public User update(User entity, Long callerId) {
@@ -85,9 +85,8 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "userCacheByName", key = "#entity.username"),
-            @CacheEvict(value = "userCacheById", key = "#entity.id"),
-            @CacheEvict(value = "modalitiesByUserCache", key = "#entity.id")
+            @CacheEvict(value = "userCacheByUserName", key = "#entity.username"),
+            @CacheEvict(value = "userCacheById", key = "#entity.id")
     })
     public void delete(User entity, Long callerId) {
         super.delete(entity, callerId);
@@ -95,9 +94,8 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "userCacheByName", key = "#entity.username"),
-            @CacheEvict(value = "userCacheById", key = "#entity.id"),
-            @CacheEvict(value = "modalitiesByUserCache", key = "#entity.id")
+            @CacheEvict(value = "userCacheByUserName", key = "#entity.username"),
+            @CacheEvict(value = "userCacheById", key = "#entity.id")
     })
     public User voids(User entity, Long callerId, String reason) {
         return super.voids(entity, callerId, reason);

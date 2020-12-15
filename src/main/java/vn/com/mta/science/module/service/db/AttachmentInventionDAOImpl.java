@@ -6,7 +6,6 @@ import vn.com.itechcorp.base.repository.dao.hibernate.AuditableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.AttachmentInvention;
 import vn.com.mta.science.module.model.AttachmentInvention_;
-import vn.com.mta.science.module.model.Attachment_;
 import vn.com.mta.science.module.service.filter.AttachmentFilter;
 
 import javax.persistence.criteria.Predicate;

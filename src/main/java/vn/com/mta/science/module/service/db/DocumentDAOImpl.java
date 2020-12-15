@@ -1,11 +1,13 @@
 package vn.com.mta.science.module.service.db;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.*;
-import vn.com.mta.science.module.service.filter.AffiliationFilter;
 import vn.com.mta.science.module.service.filter.DocumentFilter;
 
 import javax.persistence.criteria.*;
@@ -18,7 +20,6 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
     public Class<Document> getEntityClass() {
         return Document.class;
     }
-
 
     @Override
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
@@ -46,15 +47,18 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
 
             if (filter.getStarttime() != null)
                 if (filter.getEndtime() != null) {
-                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Document_.PUBLISH_DATE), filter.getStarttime(), filter.getEndtime() + "-12-31"));
+                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Document_.PUBLISH_DATE), filter.getStarttime(), filter.getEndtime() + "-99-99"));
                 }
 
             if (filter.getAuthorId() != null && !filter.getAuthorId().isEmpty()) {
+
                 Join<Object, Object> roleJoin = criteriaInfo.getRoot().join(Document_.AUTHORS, JoinType.LEFT);
-                CriteriaBuilder.In<String> inListRoleIds = criteriaInfo.getBuilder().in(roleJoin.get(Author_.FULLNAME));
-                for (String authorName : filter.getAuthorId())
-                    inListRoleIds.value(authorName);
-                predicates.add(inListRoleIds);
+
+                for (String authorName : filter.getAuthorId()) {
+
+                    predicates.add(criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(roleJoin.get(Author_.FULLNAME)),
+                            "%"+ authorName.toLowerCase() +"%"));
+                }
             }
 
             if (filter.getKeyword() != null) {
@@ -74,6 +78,36 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
         }
 
         return null;
+    }
+
+    @Override
+    @CacheEvict(value = "documentCache", key = "#entity.id")
+    public Document create(Document entity, Long callerId) {
+        return super.create(entity, callerId);
+    }
+
+    @Override
+    @Cacheable(value = "documentCache", key = "#id", unless = "#result == null")
+    public Document getById(Long id) {
+        return super.getById(id);
+    }
+
+    @Override
+    @CacheEvict(value = "documentCache", key = "#entity.id")
+    public Document update(Document entity, Long callerId) {
+        return super.update(entity, callerId);
+    }
+
+    @Override
+    @CacheEvict(value = "documentCache", key = "#entity.id")
+    public void delete(Document entity, Long callerId) {
+        super.delete(entity, callerId);
+    }
+
+    @Override
+    @CacheEvict(value = "documentCache", key = "#entity.id")
+    public Document voids(Document entity, Long callerId, String reason) {
+        return super.voids(entity, callerId, reason);
     }
 
 }

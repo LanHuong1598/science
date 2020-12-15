@@ -19,16 +19,11 @@ import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.db.*;
 import vn.com.mta.science.module.service.filter.*;
 
-import javax.print.Doc;
-import javax.print.DocFlavor;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
@@ -114,7 +109,18 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         documentMemberFilter.setDocumentId(document.getId());
         List<DocumentMember> documentMembers = documentMemberDAO.getPageOfData(documentMemberFilter, null);
         if (documentMembers != null)
+        {
             documentGet.setAuthors(documentMembers.stream().map(DocumentMember::getAuthorId).collect(Collectors.toList()));
+
+            documentGet.setAuthorsName(new ArrayList<>());
+            for (DocumentMember id : documentMembers){
+                Author author = authorDAO.getById(id.getAuthorId());
+                if (author != null) {
+                    documentGet.getAuthorsName().add(author.getFullname());
+                }
+            }
+
+        }
 
 //        if (document.getMajorId() != null) {
 //            Major major = majorDAO.getById(document.getMajorId());
@@ -127,6 +133,25 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 //                }
 //            }
 //        }
+//
+//        Classification classification = classificationDAO.getById(document.getClassificationId());
+//        if (classification != null) {
+//            documentGet.setClassificationName(classification.getName());
+//        }
+//
+//        DocumentType documentType = documentTypeDAO.getById(document.getDocumentType());
+//        if (documentType != null) documentGet.setDocumentTypeName(documentType.getName());
+//
+//        ResearchGroup researchGroup = researchGroupDAO.getById(document.getGroupId());
+//        if (researchGroup != null) documentGet.setGroupName(researchGroup.getName());
+//
+//
+//        Major major = majorDAO.getById(document.getMajorId());
+//        if (major != null) documentGet.setMajorName(major.getName());
+//
+//        Major major1 = majorDAO.getById(document.getSpecializationId());
+//        if (major1 != null) documentGet.setSpecializationName(major1.getName());
+
 
         return documentGet;
     }
@@ -248,6 +273,9 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
                     lt.setSpecializationId(author);
                 }
             }
+
+            lt.setEndtime(ft.getEndtime());
+            lt.setStarttime(ft.getStarttime());
 
             return super.getPageOfData(lt, pageinfo);
 
@@ -461,6 +489,27 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
         object.apply(document);
         return convert(getDAO().update(document, callerId));
+    }
+
+    @Override
+    public void updatedb(){
+        List<Document> documents = documentDAO.getAll();
+
+        for (Document document : documents){
+            String str = document.getPublishDate();
+            String[] arrOfStr = str.split("-");
+            if (arrOfStr.length >= 2){
+                if (arrOfStr[1].length() < 2){
+                    arrOfStr[1] = "0" + arrOfStr[1];
+                    String s = "";
+                    for (String ss : arrOfStr){
+                        s = s + ss + "-";
+                    }
+                    document.setPublishDate(s.substring(0, s.length()-1));
+                    documentDAO.update(document, 0L);
+                }
+            }
+        }
     }
 
 

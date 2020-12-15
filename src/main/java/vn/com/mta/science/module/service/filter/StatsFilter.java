@@ -15,6 +15,6 @@ public class StatsFilter implements BaseFilter {
 
     private String type ;
 
-    private Long keyword;
+    private String keyword;
 
 }

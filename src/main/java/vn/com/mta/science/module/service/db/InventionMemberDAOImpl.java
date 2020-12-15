@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.AuditableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
-import vn.com.mta.science.module.model.DocumentMember_;
 import vn.com.mta.science.module.model.InventionMember;
 import vn.com.mta.science.module.model.InventionMember_;
 import vn.com.mta.science.module.service.filter.DocumentMemberFilter;

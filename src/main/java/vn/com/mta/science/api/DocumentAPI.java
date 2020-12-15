@@ -13,7 +13,6 @@ import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.DocumentService;
-import vn.com.mta.science.module.service.filter.DocumentFilter;
 import vn.com.mta.science.module.service.filter.DocumentTotalFilter;
 
 import javax.validation.Valid;

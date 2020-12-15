@@ -60,14 +60,14 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
     @Override
     public UserGet1 login(Credential credential) throws APIException {
 
-        User user = getDAO().getByUserName(credential.getUsername());
+        User user = getDAO().getByUserName(credential.getUsername().toLowerCase());
         if (user == null) throw new APIAuthenticationException("Invalid credential");
 
         if (!ItechUserPasswordEncoder.getInstance().matches(credential.getPassword(), user.getPassword()))
             throw new APIAuthenticationException("Invalid credential");
 
         UserGet1 userGet1 = new UserGet1();
-        userGet1.setToken("Basic " + Base64.getEncoder().encodeToString((credential.getUsername() + ":" + credential.getPassword()).getBytes()));
+        userGet1.setToken("Basic " + Base64.getEncoder().encodeToString((credential.getUsername().toLowerCase() + ":" + credential.getPassword()).getBytes()));
         userGet1.setAu("user");
         for (Role role : user.getRoles()) {
             if (role.getId().equals("sysadmin")) {
@@ -93,6 +93,7 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
         PasswordChangeGet password = new PasswordChangeGet();
         password.setLength(object.getNewPassword().length());
         password.setHint(object.getHint());
+        password.setToken("Basic " + Base64.getEncoder().encodeToString((user.getUsername() + ":" + object.getNewPassword()).getBytes()));
 
         return password;
     }

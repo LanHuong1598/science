@@ -10,10 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIResponse;
-import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.model.Invention;
 import vn.com.mta.science.module.schema.*;
-import vn.com.mta.science.module.service.DocumentService;
 import vn.com.mta.science.module.service.InventionService;
 
 import javax.validation.Valid;
@@ -55,7 +53,7 @@ public class InventionAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_ADD)")
     @PostMapping("/invention")
     public ResponseEntity<APIResponse<InventionGet>> create(
-            @Valid @RequestBody InventionCreate object) {
+            @Valid @ModelAttribute("uploadForm") InventionCreate object) {
         return inventionMethod.create(object, 0L);
     }
 
@@ -63,7 +61,7 @@ public class InventionAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_EDIT)")
     @PutMapping("/invention")
     public ResponseEntity<APIResponse<InventionGet>> edit(
-            @Valid @RequestBody InventionUpdate object) {
+            @Valid @ModelAttribute("uploadForm") InventionUpdate object) {
         return inventionMethod.update(object, 0L);
     }
 

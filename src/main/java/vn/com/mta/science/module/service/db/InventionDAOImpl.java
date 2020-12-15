@@ -5,8 +5,6 @@ import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.*;
-import vn.com.mta.science.module.service.filter.DocumentFilter;
-import vn.com.mta.science.module.service.filter.DocumentMemberFilter;
 import vn.com.mta.science.module.service.filter.InventionFilter;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -39,8 +37,48 @@ public class InventionDAOImpl extends VoidableDAOHbnImpl<Invention, Long> implem
 
             if (filter.getStarttime() != null)
                 if (filter.getEndtime() != null) {
-                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Invention_.PUBLICATION_DATE), filter.getStarttime(), filter.getEndtime() + "-12-31"));
+                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Invention_.PUBLICATION_DATE), filter.getStarttime(), filter.getEndtime() + "-99-99"));
                 }
+
+            if (filter.getGroupId() != null && !filter.getGroupId().isEmpty())
+                predicates.add(criteriaInfo.getRoot().get(Invention_.GROUP_ID).in(filter.getGroupId()));
+
+//            if (filter.getMajorId() != null && !filter.getMajorId().isEmpty())
+//                predicates.add(criteriaInfo.getRoot().get(Document_.MAJOR_ID).in(filter.getMajorId()));
+//
+//            if (filter.getSpecializationId() != null && !filter.getSpecializationId().isEmpty())
+//                predicates.add(criteriaInfo.getRoot().get(Document_.SPECIALIZATION_ID).in(filter.getSpecializationId()));
+//
+//
+//            if (filter.getStarttime() != null)
+//                if (filter.getEndtime() != null) {
+//                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Document_.PUBLISH_DATE), filter.getStarttime(), filter.getEndtime() + "-12-31"));
+//                }
+//
+            if (filter.getAuthorId() != null && !filter.getAuthorId().isEmpty()) {
+
+                Join<Object, Object> roleJoin = criteriaInfo.getRoot().join(Document_.AUTHORS, JoinType.LEFT);
+
+                for (String authorName : filter.getAuthorId()) {
+
+                    predicates.add(criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(roleJoin.get(Author_.FULLNAME)),
+                            "%"+ authorName.toLowerCase() +"%"));
+                }
+            }
+//
+            if (filter.getKeyword() != null) {
+                predicates.add(criteriaInfo.getBuilder().like(criteriaInfo.getRoot().get(Invention_.DESCRIPTION),
+                        "%" + filter.getKeyword() + "%"));
+            }
+//
+            if (filter.getAffiliationId() != null && !filter.getAffiliationId().isEmpty()){
+                Join<Object, Object> roleJoin = criteriaInfo.getRoot().join(Invention_.AUTHORS, JoinType.LEFT);
+                CriteriaBuilder.In<Long> inListRoleIds = criteriaInfo.getBuilder().in(roleJoin.get(Author_.AFFILIATION_ID));
+                for (Long authorName : filter.getAffiliationId())
+                    inListRoleIds.value(authorName);
+                predicates.add(inListRoleIds);
+            }
+//
 
 
             return predicates;

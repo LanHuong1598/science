@@ -5,10 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
-import vn.com.mta.science.module.model.Affiliation;
 import vn.com.mta.science.module.model.Invention;
 
-import javax.persistence.Column;
 import java.util.Collection;
 
 @Getter
@@ -52,7 +50,7 @@ public class InventionCreate extends GeneratedIDSchemaCreate<Invention> {
 
     private Collection<Long> authors;
 
-    private MultipartFile image;
+    private MultipartFile attachmentsFullText;
 
     @Override
     public Invention toEntry() {

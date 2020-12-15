@@ -5,9 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.model.VoidableGeneratedIDEntry;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "invention")
@@ -66,4 +65,12 @@ public class Invention extends VoidableGeneratedIDEntry {
 
     @Column(name = "type")
     private String type;
+
+
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(name = "invention_member",
+            joinColumns = @JoinColumn(name = "invention_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
 }

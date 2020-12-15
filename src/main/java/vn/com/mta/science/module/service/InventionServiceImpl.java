@@ -1,7 +1,6 @@
 package vn.com.mta.science.module.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,20 +8,17 @@ import vn.com.itechcorp.base.exception.APIException;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
-import vn.com.itechcorp.base.util.UuidUtil;
 import vn.com.itechcorp.telerad.file.io.FileUtil;
 import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.db.*;
 import vn.com.mta.science.module.service.filter.AttachmentFilter;
-import vn.com.mta.science.module.service.filter.CitedFilter;
 import vn.com.mta.science.module.service.filter.DocumentMemberFilter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +56,8 @@ public class InventionServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<I
         attachmentFilter.setDocumentId(invention.getId());
         List<AttachmentInvention> attachments = attachmentInventionDAO.getPageOfData(attachmentFilter, null);
         if (attachments != null) {
-            inventionGet.setImage(attachments.get(0).getUrl());
+            inventionGet.setAttachmentsFullText(attachments.get(0));
+            inventionGet.setUrl(attachments.get(0).getUrl());
         }
 
 
@@ -114,9 +111,9 @@ public class InventionServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<I
             }
         }
 
-        if (object.getImage() != null && !object.getImage().isEmpty()) {
+        if (object.getAttachmentsFullText() != null && !object.getAttachmentsFullText().isEmpty()) {
 
-            MultipartFile file = object.getImage();
+            MultipartFile file = object.getAttachmentsFullText();
             try {
                saveAttachmentFullText(file, invention);
             } catch (Exception ex) {
@@ -135,10 +132,6 @@ public class InventionServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<I
 
         Invention invention = inventionDAO.getById(object.getId());
 
-        AttachmentFilter attachmentFilter = new AttachmentFilter();
-        attachmentFilter.setDocumentId(invention.getId());
-        attachmentFilter.setType(0L);
-
         DocumentMemberFilter documentMemberFilter = new DocumentMemberFilter();
         documentMemberFilter.setDocumentId(invention.getId());
         List<InventionMember> documentMembers = inventionMemberDAO.getPageOfData(documentMemberFilter, null);
@@ -156,6 +149,37 @@ public class InventionServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<I
             }
         }
 
+        if (object.getAttachmentsFullText() != null){
+            AttachmentFilter attachmentFilter = new AttachmentFilter();
+            attachmentFilter.setDocumentId(invention.getId());
+            attachmentFilter.setType(0L);
+
+            List<AttachmentInvention> attachments = attachmentInventionDAO.getPageOfData(attachmentFilter, null);
+            if (attachments != null) {
+                for (AttachmentInvention attachment : attachments) {
+                    attachmentInventionDAO.delete(attachment, 0L);
+                }
+            }
+
+            attachmentFilter.setType(1L);
+            attachments = attachmentInventionDAO.getPageOfData(attachmentFilter, null);
+            if (attachments != null) {
+                for (AttachmentInvention attachment : attachments) {
+                    attachmentInventionDAO.delete(attachment, 0L);
+                }
+            }
+
+            if (object.getAttachmentsFullText() != null) {
+                Set<AttachmentInvention> attachmentsAdd = new HashSet<>();
+                MultipartFile file = object.getAttachmentsFullText();
+                try {
+                    attachmentsAdd.add(saveAttachmentFullText(file, invention));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        }
 
         object.apply(invention);
         return convert(getDAO().update(invention, callerId));

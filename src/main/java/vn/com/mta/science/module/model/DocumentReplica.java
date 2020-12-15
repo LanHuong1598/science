@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.model.AuditableDbEntry;
-import vn.com.itechcorp.base.repository.model.VoidableGeneratedIDEntry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

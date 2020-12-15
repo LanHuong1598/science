@@ -14,4 +14,6 @@ public class PasswordChangeGet implements Serializable {
     private int length;
 
     private String hint;
+
+    private String token;
 }

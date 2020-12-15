@@ -7,4 +7,5 @@ import vn.com.mta.science.module.schema.DocumentGet;
 
 public interface DocumentService extends VoidableGeneratedIDSchemaService<DocumentGet, Document> {
 
+    public void updatedb();
 }

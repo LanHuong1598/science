@@ -6,7 +6,6 @@ import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.mta.science.module.model.Author;
 
-import javax.persistence.Column;
 import java.util.Date;
 import java.util.List;
 

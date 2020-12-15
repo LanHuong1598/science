@@ -3,8 +3,7 @@ package vn.com.mta.science.module.schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.com.itechcorp.base.repository.model.interfaces.BaseEntity;
-import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
+import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
 import vn.com.mta.science.module.model.Invention;
 
@@ -50,6 +49,8 @@ public class InventionUpdate extends SchemaUpdate<Invention, Long> {
     private String type;
 
     private Collection<Long> authors;
+
+    private MultipartFile attachmentsFullText;
 
     @Override
     public boolean apply(Invention object) {

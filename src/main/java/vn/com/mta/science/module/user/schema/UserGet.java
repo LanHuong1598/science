@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaGet;
-import vn.com.mta.science.module.user.auth.ItechUserPasswordEncoder;
 import vn.com.mta.science.module.user.model.Gender;
 import vn.com.mta.science.module.user.model.Role;
 import vn.com.mta.science.module.user.model.User;

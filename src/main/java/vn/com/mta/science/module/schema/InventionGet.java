@@ -3,8 +3,8 @@ package vn.com.mta.science.module.schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaGet;
+import vn.com.mta.science.module.model.AttachmentInvention;
 import vn.com.mta.science.module.model.Invention;
 
 import java.util.Collection;
@@ -50,7 +50,9 @@ public class InventionGet extends SchemaGet<Invention, Long> {
 
     private Collection<Long> authors;
 
-    private String image;
+    private AttachmentInvention attachmentsFullText;
+
+    private String url;
 
     public InventionGet(Invention invention) {
         super(invention);

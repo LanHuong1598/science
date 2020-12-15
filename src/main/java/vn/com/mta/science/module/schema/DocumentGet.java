@@ -39,7 +39,11 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Long documentType;
 
+    private String documentTypeName;
+
     private Long groupId;
+
+    private String groupName;
 
     private Long majorId;
 
@@ -59,6 +63,8 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Long mtaJournalId;
 
+    private String mtaJournalName;
+
     private AttachmentGet attachmentsFullText;
 
     private String url;
@@ -66,6 +72,8 @@ public class DocumentGet extends SchemaGet<Document, Long> {
     private Collection<AttachmentGet> attachmentsAbstract;
 
     private Collection<Long> authors;
+
+    private Collection<String> authorsName;
 
     private Collection<CitedGet> citeds;
 

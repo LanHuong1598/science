@@ -15,7 +15,6 @@ import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.itechcorp.base.api.response.APIResponseHeader;
 import vn.com.itechcorp.base.api.response.APIResponseStatus;
 import vn.com.itechcorp.base.exception.APIAuthenticationException;
-import vn.com.itechcorp.base.repository.dao.PaginationInfo;
 import vn.com.itechcorp.base.util.Pair;
 import vn.com.mta.science.module.model.Author;
 import vn.com.mta.science.module.schema.AuthorCreate;

@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 
-import javax.persistence.Column;
 import java.util.Set;
 
 @Getter

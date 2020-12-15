@@ -6,7 +6,6 @@ import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.Degree;
 import vn.com.mta.science.module.model.Degree_;
-import vn.com.mta.science.module.service.filter.AffiliationFilter;
 import vn.com.mta.science.module.service.filter.DegreeFilter;
 
 import javax.persistence.criteria.Predicate;

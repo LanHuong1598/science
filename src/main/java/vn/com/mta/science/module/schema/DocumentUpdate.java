@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
 import vn.com.mta.science.module.model.Document;
 

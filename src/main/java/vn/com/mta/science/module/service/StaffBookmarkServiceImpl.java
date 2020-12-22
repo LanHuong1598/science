@@ -4,9 +4,6 @@ import org.apache.commons.collections4.ListUtils;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,16 +28,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional
 @Service("hospitalBookmarkService")
@@ -472,27 +464,27 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
         for (List<StatsByYear> statsByYears : output) {
             File template = null;
-            if (statsByYears.size() == 5)
-                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_5years.docx");
-            else if (statsByYears.size() == 4)
-                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_4years.docx");
-            else if (statsByYears.size() == 3)
-                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_3years.docx");
-            else if (statsByYears.size() == 2)
-                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_2years.docx");
-            else if (statsByYears.size() == 1)
-                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_1years.docx");
-
 //            if (statsByYears.size() == 5)
-//                template = new File("D:\\Deploy\\baocao_template\\template1_5years.docx");
-//              else if (statsByYears.size() == 4)
-//                template = new File("D:\\Deploy\\baocao_template\\template1_4years.docx");
+//                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_5years.docx");
+//            else if (statsByYears.size() == 4)
+//                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_4years.docx");
 //            else if (statsByYears.size() == 3)
-//                template = new File("D:\\Deploy\\baocao_template\\template1_3years.docx");
+//                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_3years.docx");
 //            else if (statsByYears.size() == 2)
-//                template = new File("D:\\Deploy\\baocao_template\\template1_2years.docx");
+//                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_2years.docx");
 //            else if (statsByYears.size() == 1)
-//                template = new File("D:\\Deploy\\baocao_template\\template1_1years.docx");
+//                template = new File("/home/lanhuong/Downloads/science/baocao_template/template1_1years.docx");
+
+            if (statsByYears.size() == 5)
+                template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_5years.docx");
+              else if (statsByYears.size() == 4)
+                template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_4years.docx");
+            else if (statsByYears.size() == 3)
+                template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_3years.docx");
+            else if (statsByYears.size() == 2)
+                template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_2years.docx");
+            else if (statsByYears.size() == 1)
+                template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_1years.docx");
 
             OutputStream out = new FileOutputStream(statsByYears.get(0).getYear().toString());
 

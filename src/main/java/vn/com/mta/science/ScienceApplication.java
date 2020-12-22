@@ -10,7 +10,6 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import vn.com.mta.science.config.interceptor.HibernateStatisticsInterceptor;
-import vn.com.mta.science.module.service.StaffBookmarkServiceImpl;
 
 import javax.sql.DataSource;
 

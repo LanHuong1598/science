@@ -7,13 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import vn.com.itechcorp.base.api.method.BaseAPIMethod;
 import vn.com.itechcorp.base.api.method.GeneratedIDSchemaAPIMethod;
 import vn.com.itechcorp.base.api.method.SchemaAPIMethod;
 import vn.com.itechcorp.base.api.response.APIListResponseHeader;
@@ -21,7 +19,6 @@ import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.itechcorp.base.api.response.APIResponseHeader;
 import vn.com.itechcorp.base.api.response.APIResponseStatus;
 import vn.com.itechcorp.base.exception.*;
-import vn.com.mta.science.module.user.auth.ItechUserPasswordEncoder;
 import vn.com.mta.science.module.user.auth.ItechUserUtil;
 import vn.com.mta.science.module.user.filter.UserFilter;
 import vn.com.mta.science.module.user.model.Role;
@@ -32,8 +29,6 @@ import vn.com.mta.science.module.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SuppressWarnings("Duplicates")
 @RestController

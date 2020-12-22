@@ -9,7 +9,6 @@ import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.Author;
 import vn.com.mta.science.module.model.Author_;
-import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.service.filter.AuthorFilter;
 
 import javax.persistence.criteria.Predicate;

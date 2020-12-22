@@ -1,7 +1,6 @@
 package vn.com.mta.science.module.service.db;
 
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;

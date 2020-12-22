@@ -174,10 +174,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
-<!--				<configuratiougn>-->
-<!--					<source>1.8</source>-->
-<!--					<target>1.8</target>-->
-<!--				</configuratiougn>-->
+				<!--				<configuratiougn>-->
+				<!--					<source>1.8</source>-->
+				<!--					<target>1.8</target>-->
+				<!--				</configuratiougn>-->
 			</plugin>
 
 			<plugin>

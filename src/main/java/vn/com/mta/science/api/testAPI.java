@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.api.response.APIListResponseHeader;
@@ -20,6 +21,7 @@ import vn.com.mta.science.module.schema.ocr;
 import vn.com.mta.science.module.service.DocumentService;
 import vn.com.mta.science.module.service.StaffBookmarkService;
 import vn.com.mta.science.module.service.filter.StatsFilter;
+import vn.com.mta.science.module.user.auth.ItechUserUtil;
 import vn.com.mta.science.module.user.schema.Credential;
 import vn.com.mta.science.module.user.schema.UserGet1;
 import vn.com.mta.science.module.user.service.UserService;
@@ -76,11 +78,11 @@ public class testAPI {
 
     @PreAuthorize("permitAll()")
     @PostMapping("/statsbyyear")
-    public ResponseEntity<APIResponse<Stats>> stats(
+    public ResponseEntity<APIResponse<Stats>> stats(Authentication authentication,
             @RequestBody StatsFilter statsFilter
             ) {
         try {
-            Stats results = staffBookmarkService.getStats(statsFilter);
+            Stats results = staffBookmarkService.getStats(statsFilter, ItechUserUtil.extractUserId(authentication));
             APIResponse<Stats> response = results == null ?
                     new APIResponse<>(new APIResponseHeader(APIResponseStatus.NOT_FOUND, "No record found"), null)
                     : new APIResponse<>(new APIListResponseHeader(APIResponseStatus.FOUND, results.getDs().size() + " record(s) found", 0, 0, results.getDs().size()), results);

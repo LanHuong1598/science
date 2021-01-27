@@ -61,7 +61,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).AFFILIATION_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).AFFILIATION_MANAGE)")
     @PostMapping("/affiliation")
     public ResponseEntity<APIResponse<AffiliationGet>> create(
             @Valid @RequestBody AffiliationCreate object) {
@@ -90,7 +90,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).CLASSIFICATION_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).CLASSIFICATION_MANAGE)")
     @PostMapping("/classification")
     public ResponseEntity<APIResponse<ClassificationGet>> create(
             @Valid @RequestBody ClassificationCreate object) {
@@ -117,7 +117,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENTTYPE_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENTTYPE_MANAGE)")
     @PostMapping("/document-type")
     public ResponseEntity<APIResponse<DocumentTypeGet>> create(
             @Valid @RequestBody DocumentTypeCreate object) {
@@ -144,7 +144,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).LANGUAGE_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).LANGUAGE_MANAGE)")
     @PostMapping("/language")
     public ResponseEntity<APIResponse<LanguageGet>> create(
             @Valid @RequestBody LanguageCreate object) {
@@ -172,7 +172,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).DEGREE_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).DEGREE_MANAGE)")
     @PostMapping("/degree")
     public ResponseEntity<APIResponse<DegreeGet>> create(
             @Valid @RequestBody DegreeCreate object) {
@@ -214,7 +214,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).MAJOR_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).MAJOR_MANAGE)")
     @PostMapping("/major")
     public ResponseEntity<APIResponse<MajorGet>> create(
             @Valid @RequestBody MajorCreate object) {
@@ -233,7 +233,7 @@ public class MetadataAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).CITED_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).CITED_MANAGE)")
     @PostMapping("/cited")
     public ResponseEntity<APIResponse<CitedGet>> createCited
             (@Valid @RequestBody CitedCreate citedCreate) {

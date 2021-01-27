@@ -19,6 +19,7 @@ import vn.com.mta.science.module.user.service.db.UserDAO;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("userService")
 public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGet, User> implements UserService {
@@ -74,6 +75,7 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
                 userGet1.setAu("admin");
             }
         }
+        userGet1.setRoles(user.getRoles().stream().map(x -> new RoleGet(x)).collect(Collectors.toSet()));
         return userGet1;
     }
 

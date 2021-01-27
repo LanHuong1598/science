@@ -135,7 +135,7 @@ public class UserController {
 
     @ApiOperation(value = "Inserts the given user into the database")
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).USER_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).USER_MANAGE)")
     @PostMapping("/user")
     public ResponseEntity<APIResponse<UserGet>> createUser(Authentication basicAuth,
                                                            @Valid @RequestBody UserCreate object) {
@@ -144,7 +144,7 @@ public class UserController {
 
     @ApiOperation(value = "Updates the given user in the database")
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).USER_EDIT)")
+            + "T(vn.com.mta.science.util.ItechAuthority).USER_MANAGE)")
     @PutMapping("/user")
     public ResponseEntity<APIResponse<UserGet>> updateUser(
             Authentication basicAuth,
@@ -154,7 +154,7 @@ public class UserController {
 
     @ApiOperation(value = "Deletes a user with the given ID")
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).USER_DELETE)")
+            + "T(vn.com.mta.science.util.ItechAuthority).USER_MANAGE)")
     @DeleteMapping("/user/{id}")
     public ResponseEntity<APIResponse<UserGet>> deleteUser(Authentication basicAuth,
                                                            @PathVariable(name = "id") Long id,
@@ -165,7 +165,7 @@ public class UserController {
     // password
     @ApiOperation(value = "Creates password for a user with the given ID")
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).USER_EDIT)")
+            + "T(vn.com.mta.science.util.ItechAuthority).USER_MANAGE)")
     @PostMapping("/user/{id}/password")
     public ResponseEntity<APIResponse<PasswordChangeGet>> changePassword(Authentication basicAuth,
                                                                          @PathVariable(name = "id") Long id,

@@ -51,7 +51,7 @@ public class DocumentAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_MANAGE)")
     @PostMapping("/document")
     public ResponseEntity<APIResponse<DocumentGet>> createDocument(
             @Valid @ModelAttribute("uploadForm") DocumentCreate object) {
@@ -68,7 +68,7 @@ public class DocumentAPI {
 
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_EDIT)")
+            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_MANAGE)")
     @PutMapping("/document")
     public ResponseEntity<APIResponse<DocumentGet>> updateDocument(
             @Valid @ModelAttribute("uploadForm") DocumentUpdate object) {
@@ -76,7 +76,7 @@ public class DocumentAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_DELETE)")
+            + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_MANAGE)")
     @DeleteMapping("/document/{id}")
     public ResponseEntity<APIResponse<DocumentGet>> deleteDocument(
             @PathVariable(name = "id") Long id){

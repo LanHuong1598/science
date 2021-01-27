@@ -51,7 +51,7 @@ public class GroupAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).GROUP_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).GROUP_MANAGE)")
     @PostMapping("/group")
     public ResponseEntity<APIResponse<GroupGet>> createDocument(
             @Valid @RequestBody GroupCreate object) {

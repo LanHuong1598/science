@@ -50,7 +50,7 @@ public class InventionAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_MANAGE)")
     @PostMapping("/invention")
     public ResponseEntity<APIResponse<InventionGet>> create(
             @Valid @ModelAttribute("uploadForm") InventionCreate object) {
@@ -58,7 +58,7 @@ public class InventionAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_EDIT)")
+            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_MANAGE)")
     @PutMapping("/invention")
     public ResponseEntity<APIResponse<InventionGet>> edit(
             @Valid @ModelAttribute("uploadForm") InventionUpdate object) {
@@ -66,7 +66,7 @@ public class InventionAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_DELETE)")
+            + "T(vn.com.mta.science.util.ItechAuthority).INVENTION_MANAGE)")
     @DeleteMapping("/invention/{id}")
     public ResponseEntity<APIResponse<InventionGet>> delete(@PathVariable(name = "id") Long id) {
         return inventionMethod.delete(id, false, 0l);

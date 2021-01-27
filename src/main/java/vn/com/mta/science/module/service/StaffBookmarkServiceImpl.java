@@ -17,6 +17,10 @@ import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.db.AffiliationDAO;
 import vn.com.mta.science.module.service.filter.*;
+import vn.com.mta.science.module.user.model.Role;
+import vn.com.mta.science.module.user.model.User;
+import vn.com.mta.science.module.user.service.db.UserDAO;
+import vn.com.mta.science.util.ItechAuthority;
 
 
 import javax.activation.DataHandler;
@@ -27,6 +31,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.security.sasl.AuthenticationException;
 import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -108,6 +113,9 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     @Autowired
     AffiliationDAO affiliationDAO;
 
+    @Autowired
+    UserDAO userDAO;
+
     @Override
     public List<Menus> getDocumentTypeMenus() throws IOException {
         PaginationInfo paginationInfo = new PaginationInfo();
@@ -170,12 +178,22 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     }
 
     @Override
-    public Stats getStats(StatsFilter statsFilter) throws IOException {
+    public Stats getStats(StatsFilter statsFilter, Long userID) throws IOException {
 
         Stats s = new Stats();
+        User user = userDAO.getByUserName("admin");
+        if (userID != 0L) {
+            user = userDAO.getById(userID);
+            if (user == null)
+                throw new InvalidPropertiesFormatException("userID");
+        }
+
         DocumentFilter documentFilter = new DocumentFilter();
 
         if (statsFilter.getType().equals("khoa")) {
+
+            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TKHOA")).count() > 0)
+                throw new AuthenticationException();
 
             AffiliationFilter affiliationFilter = new AffiliationFilter();
             affiliationFilter.setParentId(Long.valueOf(statsFilter.getKeyword()));
@@ -184,6 +202,10 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         }
 
         if (statsFilter.getType().equals("bomon")) {
+
+            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TBM")).count() > 0)
+                throw new AuthenticationException();
+
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
             documentFilter.setAffiliationId(aff);
@@ -196,6 +218,9 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         }
 
         if (statsFilter.getType().equals("ncm")) {
+            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TNCCM")).count() > 0)
+                throw new AuthenticationException();
+
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
             documentFilter.setGroupId(aff);
@@ -451,7 +476,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
     @Override
     public String getStatsFile(StatsFilter statsFilter) throws IOException {
-        Stats stats = getStats(statsFilter);
+        Stats stats = getStats(statsFilter, 0L);
 
         BasicConfigurator.configure();
 

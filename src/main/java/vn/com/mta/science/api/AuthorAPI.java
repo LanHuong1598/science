@@ -60,7 +60,7 @@ public class AuthorAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_ADD)")
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_MANAGE)")
     @PostMapping("/author")
     public ResponseEntity<APIResponse<AuthorGet>> createAuthor(
             @Valid @RequestBody AuthorCreate object) {
@@ -68,7 +68,7 @@ public class AuthorAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_EDIT)")
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_MANAGE)")
     @PutMapping("/author")
     public ResponseEntity<APIResponse<AuthorGet>> updateAuthor(
             @Valid @RequestBody AuthorUpdate object) {
@@ -76,7 +76,7 @@ public class AuthorAPI {
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
-            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_DELETE)")
+            + "T(vn.com.mta.science.util.ItechAuthority).AUTHOR_MANAGE)")
     @DeleteMapping("/author/{id}")
     public ResponseEntity<APIResponse<AuthorGet>> deleteAuthor(
             @PathVariable(name = "id") Long id){

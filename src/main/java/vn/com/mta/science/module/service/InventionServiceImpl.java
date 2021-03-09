@@ -64,6 +64,11 @@ public class InventionServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<I
         return inventionGet;
     }
 
+    @Override
+    public InventionGet getByUuid(String uuid){
+        return convert(inventionDAO.getByUuid(uuid));
+    }
+
     private String attachmentDir;
 
 

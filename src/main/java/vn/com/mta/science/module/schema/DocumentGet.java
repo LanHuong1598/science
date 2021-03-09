@@ -77,6 +77,8 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private Collection<CitedGet> citeds;
 
+    private String uuid;
+
     public DocumentGet(Document document) {
         super(document);
     }
@@ -100,5 +102,6 @@ public class DocumentGet extends SchemaGet<Document, Long> {
         this.setSpecializationId(document.getSpecializationId());
         this.setTitle(document.getTitle());
         this.setLink(document.getLink());
+        this.setUuid(document.getUuid());
     }
 }

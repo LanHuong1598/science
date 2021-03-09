@@ -3,7 +3,9 @@ package vn.com.mta.science.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -78,11 +80,11 @@ public class testAPI {
 
     @PreAuthorize("permitAll()")
     @PostMapping("/statsbyyear")
-    public ResponseEntity<APIResponse<Stats>> stats(Authentication authentication,
+    public ResponseEntity<APIResponse<Stats>> stats(
             @RequestBody StatsFilter statsFilter
             ) {
         try {
-            Stats results = staffBookmarkService.getStats(statsFilter, ItechUserUtil.extractUserId(authentication));
+            Stats results = staffBookmarkService.getStats(statsFilter);
             APIResponse<Stats> response = results == null ?
                     new APIResponse<>(new APIResponseHeader(APIResponseStatus.NOT_FOUND, "No record found"), null)
                     : new APIResponse<>(new APIListResponseHeader(APIResponseStatus.FOUND, results.getDs().size() + " record(s) found", 0, 0, results.getDs().size()), results);
@@ -124,10 +126,19 @@ public class testAPI {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/api/download/{type}/{id}")
-    public ResponseEntity<String> getFilePDF(@PathVariable(name = "id") Long id,
+    public ResponseEntity<byte[]> getFilePDF(@PathVariable(name = "id") Long id,
                                              @PathVariable(name = "type") String type) {
         try {
-            return ResponseEntity.ok().body(staffBookmarkService.getPDF(type, id));
+
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("X-Frame-Options", "SAMEORIGIN");
+            responseHeaders.set("Content-Type", "application/pdf");
+
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+//                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(staffBookmarkService.getPDFB(type, id));
+
         } catch (ObjectNotFoundException ex) {
             logger.error(ex.getMessage());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

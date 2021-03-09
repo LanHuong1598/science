@@ -178,22 +178,14 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     }
 
     @Override
-    public Stats getStats(StatsFilter statsFilter, Long userID) throws IOException {
+    public Stats getStats(StatsFilter statsFilter) throws IOException {
 
         Stats s = new Stats();
-        User user = userDAO.getByUserName("admin");
-        if (userID != 0L) {
-            user = userDAO.getById(userID);
-            if (user == null)
-                throw new InvalidPropertiesFormatException("userID");
-        }
 
         DocumentFilter documentFilter = new DocumentFilter();
 
         if (statsFilter.getType().equals("khoa")) {
 
-            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TKHOA")).count() > 0)
-                throw new AuthenticationException();
 
             AffiliationFilter affiliationFilter = new AffiliationFilter();
             affiliationFilter.setParentId(Long.valueOf(statsFilter.getKeyword()));
@@ -203,8 +195,6 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
         if (statsFilter.getType().equals("bomon")) {
 
-            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TBM")).count() > 0)
-                throw new AuthenticationException();
 
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
@@ -218,8 +208,6 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         }
 
         if (statsFilter.getType().equals("ncm")) {
-            if (user.getRoles().stream().filter(m -> m.getId().equals("sysadmin") || m.getId().equals("ROLE_TNCCM")).count() > 0)
-                throw new AuthenticationException();
 
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
@@ -476,7 +464,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
     @Override
     public String getStatsFile(StatsFilter statsFilter) throws IOException {
-        Stats stats = getStats(statsFilter, 0L);
+        Stats stats = getStats(statsFilter);
 
         BasicConfigurator.configure();
 
@@ -676,25 +664,42 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
         if (!type.equals("invention")){
             DocumentGet document = documentService.getById(id);
+
+            String base64File = "";
             File file = new File(document.getAttachmentsFullText().getUrl());
-            String encodedString = Base64
-                    .getEncoder()
-                    .encodeToString(StreamUtils.copyToByteArray(new FileInputStream(file)));
-            return encodedString;
+            try (FileInputStream imageInFile = new FileInputStream(file)) {
+                // Reading a file from file system
+                byte fileData[] = new byte[(int) file.length()];
+                imageInFile.read(fileData);
+                base64File = Base64.getEncoder().encodeToString(fileData);
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found" + e);
+            } catch (IOException ioe) {
+                System.out.println("Exception while reading the file " + ioe);
+            }
+            return base64File;
         } else {
             InventionGet inventionGet = inventionService.getById(id);
+            String base64File = "";
             File file = new File(inventionGet.getAttachmentsFullText().getUrl());
-            String encodedString = Base64
-                    .getEncoder()
-                    .encodeToString(StreamUtils.copyToByteArray(new FileInputStream(file)));
-            return encodedString;
+            try (FileInputStream imageInFile = new FileInputStream(file)) {
+                // Reading a file from file system
+                byte fileData[] = new byte[(int) file.length()];
+                imageInFile.read(fileData);
+                base64File = Base64.getEncoder().encodeToString(fileData);
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found" + e);
+            } catch (IOException ioe) {
+                System.out.println("Exception while reading the file " + ioe);
+            }
+            return base64File;
         }
     }
 
     @Override
     public byte[] getPDFB(String type, Long id) throws APIException, IOException {
         DocumentGet document = documentService.getById(id);
-        File file = new File(document.getAttachmentsFullText().getUrl());
+        File file = new File("/home/lanhuong/Occupational change and wage inequality European Jobs Monitor 2017 - ef1710en.pdf");
         return StreamUtils.copyToByteArray(new FileInputStream(file));
     }
 

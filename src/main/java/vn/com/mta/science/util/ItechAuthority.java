@@ -42,6 +42,8 @@ public enum ItechAuthority {
     STATS_AUTHOR,
     STATS_BOMON,
     STATS_KHOA,
-    STATS_NCM
+    STATS_NCM,
+
+    ROLE_GET
 
 }

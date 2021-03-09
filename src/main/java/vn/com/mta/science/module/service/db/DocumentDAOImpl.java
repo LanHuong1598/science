@@ -8,6 +8,8 @@ import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.service.filter.DocumentFilter;
+import vn.com.mta.science.module.user.model.User;
+import vn.com.mta.science.module.user.model.User_;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -107,6 +109,17 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
     @CacheEvict(value = "documentCache", key = "#entity.id")
     public Document voids(Document entity, Long callerId, String reason) {
         return super.voids(entity, callerId, reason);
+    }
+
+    @Override
+    @Cacheable(value = "documentByUuid", key = "#uuid", unless = "#result == null")
+    public Document getByUuid(String uuid) {
+        CriteriaInfo criteriaInfo = getBaseCriteriaInfo();
+        criteriaInfo.getCriteria().where(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Document_.UUID), uuid));
+
+        List<Document> results = getSession().createQuery(criteriaInfo.getCriteria()).getResultList();
+        if (results == null || results.isEmpty()) return null;
+        return results.get(0);
     }
 
 }

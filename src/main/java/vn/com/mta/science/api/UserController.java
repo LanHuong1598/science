@@ -203,8 +203,8 @@ public class UserController {
     private SchemaAPIMethod<RoleGet, Role, String> extRoleAPI;
 
     @ApiOperation(value = "View a list of available roles")
-    @PreAuthorize("hasAnyAuthority(T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).SYSADMIN, " +
-            "T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).ROLE_GET)")
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).ROLE_GET)")
     @GetMapping("/role")
     public ResponseEntity<APIResponse<List<RoleGet>>> getAllRoles(
             @RequestParam(required = false, name = "orderBy", defaultValue = "id") String orderBy,
@@ -215,16 +215,16 @@ public class UserController {
     }
 
     @ApiOperation(value = "Search a role with an ID")
-    @PreAuthorize("hasAnyAuthority(T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).SYSADMIN, " +
-            "T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).ROLE_GET)")
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).ROLE_GET)")
     @GetMapping("/role/{id}")
     public ResponseEntity<APIResponse<RoleGet>> getRoleById(@PathVariable(name = "id") String id) {
         return extRoleAPI.getById(id);
     }
 
     @ApiOperation(value = "Inserts the given role into the database")
-    @PreAuthorize("hasAnyAuthority(T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).SYSADMIN, " +
-            "T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).ROLE_MANAGE)")
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).ROLE_GET)")
     @PostMapping("/role")
     public ResponseEntity<APIResponse<RoleGet>> createRole(Authentication basicAuth,
                                                            @Valid @RequestBody RoleCreate object) {
@@ -232,8 +232,8 @@ public class UserController {
     }
 
     @ApiOperation(value = "Updates the given role in the database")
-    @PreAuthorize("hasAnyAuthority(T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).SYSADMIN," +
-            "T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).ROLE_MANAGE)")
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).ROLE_GET)")
     @PutMapping("/role")
     public ResponseEntity<APIResponse<RoleGet>> updateRole(Authentication basicAuth,
                                                            @Valid @RequestBody RoleUpdate object) {
@@ -241,8 +241,8 @@ public class UserController {
     }
 
     @ApiOperation(value = "Deletes a role with the given ID")
-    @PreAuthorize("hasAnyAuthority(T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).SYSADMIN," +
-            " T(vn.com.itechcorp.pacs.core.module.user.auth.ItechAuthority).ROLE_MANAGE)")
+    @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
+            + "T(vn.com.mta.science.util.ItechAuthority).ROLE_GET)")
     @DeleteMapping("/role/{id}")
     public ResponseEntity<APIResponse<RoleGet>> deleteRole(Authentication basicAuth,
                                                            @PathVariable(name = "id") String id,

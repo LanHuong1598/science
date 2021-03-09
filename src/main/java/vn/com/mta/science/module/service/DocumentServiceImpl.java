@@ -157,6 +157,11 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
     }
 
     @Override
+    public DocumentGet getByUuid(String uuid){
+        return convert(documentDAO.getByUuid(uuid));
+    }
+
+    @Override
     public List<DocumentGet> getPageOfData(BaseFilter filter, PaginationInfo pageinfo) {
         if (filter instanceof DocumentTotalFilter) {
 

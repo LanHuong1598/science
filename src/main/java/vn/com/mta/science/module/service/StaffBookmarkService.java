@@ -16,7 +16,7 @@ public interface StaffBookmarkService {
 
     public List<Menus> getDocumentTypeMenus() throws IOException;
 
-    public Stats getStats(StatsFilter statsFilter, Long userID) throws IOException;
+    public Stats getStats(StatsFilter statsFilter) throws IOException;
 
     public String getPDF(String type, Long id) throws APIException, IOException, InterruptedException;
 

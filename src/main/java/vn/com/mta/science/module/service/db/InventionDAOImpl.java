@@ -1,5 +1,6 @@
 package vn.com.mta.science.module.service.db;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
@@ -84,5 +85,16 @@ public class InventionDAOImpl extends VoidableDAOHbnImpl<Invention, Long> implem
             return predicates;
         }
         return null;
+    }
+
+    @Override
+    @Cacheable(value = "inventionByUuid", key = "#uuid", unless = "#result == null")
+    public Invention getByUuid(String uuid) {
+        CriteriaInfo criteriaInfo = getBaseCriteriaInfo();
+        criteriaInfo.getCriteria().where(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Invention_.UUID), uuid));
+
+        List<Invention> results = getSession().createQuery(criteriaInfo.getCriteria()).getResultList();
+        if (results == null || results.isEmpty()) return null;
+        return results.get(0);
     }
 }

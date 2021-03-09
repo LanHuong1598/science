@@ -54,6 +54,8 @@ public class InventionGet extends SchemaGet<Invention, Long> {
 
     private String url;
 
+    private String uuid;
+
     public InventionGet(Invention invention) {
         super(invention);
     }
@@ -77,5 +79,6 @@ public class InventionGet extends SchemaGet<Invention, Long> {
         publicationNo = invention.getPublicationNo();
         source = invention.getSource();
         type = invention.getType();
+        uuid = invention.getUuid();
     }
 }

@@ -12,15 +12,10 @@ import java.util.Set;
 public class UserFilter implements BaseFilter {
 
     @Size(min = 3)
-    private String fullName;
+    private String keyword;
 
-    private String departmentId;
 
-    private String email;
-
-    private String phoneNumber;
-
-    private Set<String> roleIds;
+//    private Set<String> roleIds;
 
     private Boolean hidden;
 }

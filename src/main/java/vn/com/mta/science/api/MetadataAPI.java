@@ -42,7 +42,7 @@ public class MetadataAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).AFFILIATION_GET)")
     @GetMapping("/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> getAffiliation() {
-        return affiliationMethods.getList("id", 0, 1000, false);
+        return affiliationMethods.getList("id", 0, 1000, true);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -57,7 +57,7 @@ public class MetadataAPI {
     @PostMapping("/search/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> search(
             @Valid @RequestBody AffiliationFilter object) {
-        return affiliationMethods.search("id", 0, 1000,  false, object);
+        return affiliationMethods.search("id", 0, 1000,  true, object);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -195,7 +195,7 @@ public class MetadataAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).MAJOR_GET)")
     @GetMapping("/major")
     public ResponseEntity<APIResponse<List<MajorGet>>> getAllMajor() {
-        return majorMethod.getList("id", 0, 1000, false);
+        return majorMethod.getList("id", 0, 1000, true);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -210,7 +210,7 @@ public class MetadataAPI {
     @PostMapping("/search/major")
     public ResponseEntity<APIResponse<List<MajorGet>>> searchMajor(
             @Valid @RequestBody MajorFilter object) {
-        return majorMethod.search("id", 0, 1000, false, object);
+        return majorMethod.search("id", 0, 1000, true, object);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "

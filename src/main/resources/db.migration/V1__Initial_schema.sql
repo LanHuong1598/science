@@ -38,6 +38,9 @@ CREATE TABLE users
 
     degree            text,
     title             text,
+    affiliationid     integer              not null references affiliation (id),
+	authorid		varchar(50)       ,
+	groupid         varchar(50),
     specialization    text,
 
     uuid              varchar(50)              not null,
@@ -533,14 +536,11 @@ create table document_member_replica
     last_updated_time timestamp with time zone,
     last_updated_id   integer                           default 0
 );
-
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 insert into role (id, name, authorities, uuid, created_time, last_updated_time) values
 ('sysadmin', 'sysadmin', 'SYSADMIN', uuid_generate_v4(), current_timestamp, current_timestamp),
-('ROLE_RADIOLOGIST','Bác sĩ chẩn đoán','STUDY_GET,REPORT_APPROVE,REPORT_MANAGE,STUDY_LOCK,STUDY_DOWNLOAD,ANNOTATION_MANAGE,REPORT_GET,DEPARTMENT_GET,MODALITY_GET,TEMPLATE_GET,ROLE_GET,MODALITY_STATS_GET,STUDY_WADO,TEMPLATE_MANAGE,STUDY_STATS_GET,USER_STATS_GET,ANNOTATION_GET,BOOKMARK_GET,BOOKMARK_MANAGE,USER_GET_ALL', uuid_generate_v4(), current_timestamp, current_timestamp),
-('ROLE_INTERN','Bác sĩ thực tập','STUDY_GET,REPORT_MANAGE,STUDY_LOCK,ANNOTATION_MANAGE,STUDY_DOWNLOAD,REPORT_GET,DEPARTMENT_GET,MODALITY_GET,TEMPLATE_GET,MODALITY_STATS_GET,ROLE_GET,STUDY_WADO,STUDY_STATS_GET,USER_STATS_GET,ANNOTATION_GET,BOOKMARK_GET,BOOKMARK_MANAGE', uuid_generate_v4(), current_timestamp, current_timestamp);
-
-insert into users (username, password, hidden, fullname, gender, enabled, email, phone, uuid, created_time, last_updated_time, voided_time) values
-('sysadmin', '$2a$08$4tvf.oUCSPHd5W8/pLaMVe5TAXgD3gXVxXkBuy5A0FVfjQLah.MPC', true,'sysadmin', 'M', true, 'info@itechcorp.com.vn', '0359516686', uuid_generate_v4(), current_timestamp, current_timestamp, current_timestamp);
+('ROLE_TKHOA','Trưởng khoa','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp),
+('ROLE_TBM','Trưởng bộ môn','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp),
+('tkcap2','TK cấp 2','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp);

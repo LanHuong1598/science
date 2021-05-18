@@ -8,6 +8,8 @@ import vn.com.itechcorp.base.exception.IllegalPropertyException;
 import vn.com.itechcorp.base.exception.ObjectNotFoundException;
 import vn.com.itechcorp.base.repository.dao.PaginationInfo;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
+import vn.com.mta.science.module.model.Affiliation;
+import vn.com.mta.science.module.service.db.AffiliationDAO;
 import vn.com.mta.science.module.user.auth.ItechUserPasswordEncoder;
 import vn.com.mta.science.module.user.filter.UserFilter;
 import vn.com.mta.science.module.user.model.Role;
@@ -27,6 +29,9 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private AffiliationDAO affiliationDAO;
+
     @Override
     public UserDAO getDAO() {
         return userDAO;
@@ -35,6 +40,21 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
     @Override
     public UserGet convert(User object) {
         UserGet response = new UserGet(object);
+
+        if (object.getAffiliation() != null) {
+            Affiliation affiliation = object.getAffiliation();
+
+            if (affiliation != null) {
+
+                if (affiliation.getParentId() != null) {
+                    affiliation = affiliationDAO.getById(affiliation.getParentId());
+                    if (affiliation != null) {
+                        response.setAffiliationParentId(affiliation.getId());
+                        response.setAffiliationParentName(affiliation.getName());
+                    }
+                }
+            }
+        }
 
         return response;
     }
@@ -62,10 +82,10 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
     public UserGet1 login(Credential credential) throws APIException {
 
         User user = getDAO().getByUserName(credential.getUsername().toLowerCase());
-        if (user == null) throw new APIAuthenticationException("Invalid credential");
+        if (user == null) throw new APIAuthenticationException("Username is incorrect");
 
         if (!ItechUserPasswordEncoder.getInstance().matches(credential.getPassword(), user.getPassword()))
-            throw new APIAuthenticationException("Invalid credential");
+            throw new APIAuthenticationException("Password is incorrect");
 
         UserGet1 userGet1 = new UserGet1();
         userGet1.setToken("Basic " + Base64.getEncoder().encodeToString((credential.getUsername().toLowerCase() + ":" + credential.getPassword()).getBytes()));

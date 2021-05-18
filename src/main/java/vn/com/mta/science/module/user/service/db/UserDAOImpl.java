@@ -1,12 +1,15 @@
 package vn.com.mta.science.module.user.service.db;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 import vn.com.itechcorp.base.repository.dao.CriteriaInfo;
 import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
+import vn.com.mta.science.module.model.Affiliation;
+import vn.com.mta.science.module.model.Affiliation_;
 import vn.com.mta.science.module.user.filter.UserFilter;
 import vn.com.mta.science.module.user.model.Role_;
 import vn.com.mta.science.module.user.model.User;
@@ -30,28 +33,20 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
     public List<Predicate> createPredicates(CriteriaInfo criteriaInfo, BaseFilter baseFilter) {
         if (baseFilter == null) return null;
 
-        if(baseFilter instanceof UserFilter) {
+        if (baseFilter instanceof UserFilter) {
             List<Predicate> predicates = new ArrayList<>();
             UserFilter filter = (UserFilter) baseFilter;
 
-            if (filter.getFullName() != null)
-                predicates.add(criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(criteriaInfo.getRoot().get(User_.FULL_NAME)), filter.getFullName().toLowerCase() + "%"));
+            Join<User, Affiliation> join = criteriaInfo.getRoot().join(User_.AFFILIATION);
 
-            if (filter.getEmail() != null)
-                predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(User_.EMAIL), filter.getEmail()));
-
-            if (filter.getPhoneNumber() != null)
-                predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(User_.PHONE_NUMBER), filter.getPhoneNumber()));
-
-            if (filter.getHidden() != null)
-                predicates.add(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(User_.HIDDEN), filter.getHidden()));
-
-            if (filter.getRoleIds() != null && !filter.getRoleIds().isEmpty()) {
-                Join<Object, Object> roleJoin = criteriaInfo.getRoot().join(User_.ROLES, JoinType.LEFT);
-                CriteriaBuilder.In<String> inListRoleIds = criteriaInfo.getBuilder().in(roleJoin.get(Role_.ID));
-                for (String roleId : filter.getRoleIds()) inListRoleIds.value(roleId);
-                predicates.add(inListRoleIds);
+            if (filter.getKeyword() != null) {
+                predicates.add(
+                        criteriaInfo.getBuilder().or(
+                                criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(criteriaInfo.getRoot().get(User_.FULL_NAME)), "%" + filter.getKeyword().toLowerCase() + "%"),
+                                criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(criteriaInfo.getRoot().get(User_.USERNAME)), "%" + filter.getKeyword().toLowerCase() + "%"),
+                                criteriaInfo.getBuilder().like(criteriaInfo.getBuilder().lower(join.get(Affiliation_.NAME)), "%" + filter.getKeyword().toLowerCase() + "%")));
             }
+
             return predicates;
         }
         return null;
@@ -69,9 +64,15 @@ public class UserDAOImpl extends VoidableDAOHbnImpl<User, Long> implements UserD
     }
 
     @Override
-    @Cacheable(value = "userCacheById", key = "#id", unless = "#result == null")
+    @CacheEvict(value = "userCacheById", key = "#id")
     public User getById(Long id) {
         return super.getById(id);
+    }
+
+    @Override
+    @CachePut(value = "userCacheById", key = "#entity.id")
+    public User create(User entity, Long callerId) {
+        return super.create(entity, callerId);
     }
 
     @Override

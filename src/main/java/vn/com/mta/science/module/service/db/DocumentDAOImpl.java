@@ -8,8 +8,6 @@ import vn.com.itechcorp.base.repository.dao.hibernate.VoidableDAOHbnImpl;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.service.filter.DocumentFilter;
-import vn.com.mta.science.module.user.model.User;
-import vn.com.mta.science.module.user.model.User_;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;

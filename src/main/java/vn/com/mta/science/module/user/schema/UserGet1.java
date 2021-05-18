@@ -22,6 +22,16 @@ public class UserGet1 extends SchemaGet<User, Long> {
 
     private Set<RoleGet> roles;
 
+    private Long affiliationId;
+
+    private String affiliationName;
+
+    private Long affiliationParentId;
+
+    private String affiliationParentName;
+
+    private Long groupid;
+
     public UserGet1(User user) {
         super(user);
     }
@@ -34,5 +44,10 @@ public class UserGet1 extends SchemaGet<User, Long> {
             roleGet.setAuthorities(CollectionUtils.toSet(role.getAuthorities()));
             roles.add(roleGet);
         }
+//        if (user.getAffiliation() != null) {
+//            setAffiliationId(user.getAffiliation().getId());
+//            setAffiliationName(user.getAffiliation().getName());
+//        }
+        groupid = user.getGroupId();
     }
 }

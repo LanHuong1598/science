@@ -26,13 +26,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(itechUserDetailsService).passwordEncoder(ItechUserPasswordEncoder.getInstance().getEncoder());
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().configurationSource(corsConfigurationSource()).and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/secured/ws/rest/v1/stats" , "/secured/ws/rest/v1/login", "/secured/ws/rest/v1/api/download ", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/v2/api-docs/**", "/secured/ws/rest/v1/test"
-                , "/secured/ws/rest/v1/api/download/**").permitAll()
+                .antMatchers("/secured/ws/rest/v1/stats", "/secured/ws/rest/v1/login", "/secured/ws/rest/v1/api/download ", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/v2/api-docs/**", "/secured/ws/rest/v1/test"
+                        , "/secured/ws/rest/v1/download/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();

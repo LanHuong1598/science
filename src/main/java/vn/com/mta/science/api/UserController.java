@@ -19,6 +19,10 @@ import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.itechcorp.base.api.response.APIResponseHeader;
 import vn.com.itechcorp.base.api.response.APIResponseStatus;
 import vn.com.itechcorp.base.exception.*;
+import vn.com.itechcorp.base.repository.dao.PaginationInfo;
+import vn.com.itechcorp.base.util.Pair;
+import vn.com.mta.science.module.model.Menus;
+import vn.com.mta.science.module.user.auth.ItechUserPasswordEncoder;
 import vn.com.mta.science.module.user.auth.ItechUserUtil;
 import vn.com.mta.science.module.user.filter.UserFilter;
 import vn.com.mta.science.module.user.model.Role;
@@ -104,11 +108,32 @@ public class UserController {
             + "T(vn.com.mta.science.util.ItechAuthority).USER_GET)")
     @GetMapping("/user")
     public ResponseEntity<APIResponse<List<UserGet>>> getAllUsers(
+            @RequestParam(required = false, name = "keyword", defaultValue = "") String keyword,
             @RequestParam(required = false, name = "orderBy", defaultValue = "id") String orderBy,
             @RequestParam(required = false, name = "offset", defaultValue = "0") int offset,
             @RequestParam(required = false, name = "limit", defaultValue = "10") int limit,
             @RequestParam(required = false, name = "orderAsc", defaultValue = "true") boolean orderAsc) {
-        return extUserAPI.getList(orderBy, offset, limit, orderAsc);
+        try {
+            UserFilter userFilter = new UserFilter();
+            userFilter.setKeyword(keyword);
+            PaginationInfo pageInfo = limit == 0 ? null : new PaginationInfo(orderBy, orderAsc, offset, limit);
+
+            Pair<List<UserGet>, Long> results = userService.getPageOfDataWithTotal(userFilter, pageInfo);
+            APIResponse<List<UserGet>> response = results.getFirst() == null ?
+                    new APIResponse<>(new APIResponseHeader(APIResponseStatus.NOT_FOUND, "No record found"), null)
+                    : new APIResponse<>(new APIListResponseHeader(APIResponseStatus.FOUND, results.getFirst().size()
+                    + " record(s) found", 0, 0, results.getSecond()), results.getFirst());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (APIAuthenticationException ex) {
+            logger.error(ex.getMessage());
+            return new ResponseEntity<>(new APIResponse<>(new APIResponseHeader(APIResponseStatus.UNAUTHORIZED, ex.getMessage()), null),
+                    HttpStatus.FORBIDDEN);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            return new ResponseEntity<>(new APIResponse<>(new APIResponseHeader(APIResponseStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ApiOperation(value = "Search users with filtering conditions")
@@ -139,6 +164,8 @@ public class UserController {
     @PostMapping("/user")
     public ResponseEntity<APIResponse<UserGet>> createUser(Authentication basicAuth,
                                                            @Valid @RequestBody UserCreate object) {
+        object.setPassword(ItechUserPasswordEncoder.getInstance().encode("123456"));
+
         return extUserAPI.create(object, ItechUserUtil.extractUserId(basicAuth));
     }
 

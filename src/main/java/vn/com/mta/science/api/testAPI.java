@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,10 +16,14 @@ import vn.com.itechcorp.base.api.response.APIResponseHeader;
 import vn.com.itechcorp.base.api.response.APIResponseStatus;
 import vn.com.itechcorp.base.exception.APIAuthenticationException;
 import vn.com.itechcorp.base.exception.ObjectNotFoundException;
+import vn.com.mta.science.module.model.Invention;
 import vn.com.mta.science.module.model.Menus;
+import vn.com.mta.science.module.schema.DocumentGet;
+import vn.com.mta.science.module.schema.InventionGet;
 import vn.com.mta.science.module.schema.Stats;
 import vn.com.mta.science.module.schema.ocr;
 import vn.com.mta.science.module.service.DocumentService;
+import vn.com.mta.science.module.service.InventionService;
 import vn.com.mta.science.module.service.StaffBookmarkService;
 import vn.com.mta.science.module.service.filter.StatsFilter;
 import vn.com.mta.science.module.user.auth.ItechUserUtil;
@@ -30,7 +33,9 @@ import vn.com.mta.science.module.user.service.UserService;
 
 import javax.validation.Valid;
 
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/secured/ws/rest/v1/")
@@ -39,6 +44,9 @@ public class testAPI {
 
     @Autowired
     StaffBookmarkService staffBookmarkService;
+
+    @Autowired
+    InventionService inventionService;
 
     @PreAuthorize("permitAll()")
     @PostMapping("/test")
@@ -81,10 +89,11 @@ public class testAPI {
     @PreAuthorize("permitAll()")
     @PostMapping("/statsbyyear")
     public ResponseEntity<APIResponse<Stats>> stats(
-            @RequestBody StatsFilter statsFilter
+            @RequestBody StatsFilter statsFilter,
+            Authentication basicAuth
             ) {
         try {
-            Stats results = staffBookmarkService.getStats(statsFilter);
+            Stats results = staffBookmarkService.getStats(statsFilter, ItechUserUtil.extractUserId(basicAuth));
             APIResponse<Stats> response = results == null ?
                     new APIResponse<>(new APIResponseHeader(APIResponseStatus.NOT_FOUND, "No record found"), null)
                     : new APIResponse<>(new APIListResponseHeader(APIResponseStatus.FOUND, results.getDs().size() + " record(s) found", 0, 0, results.getDs().size()), results);
@@ -103,11 +112,11 @@ public class testAPI {
 
     @PreAuthorize("permitAll()")
     @PostMapping("/statsbyyear/getfile")
-    public ResponseEntity<APIResponse<String>> statsGetFile(
+    public ResponseEntity<APIResponse<String>> statsGetFile(  Authentication basicAuth,
             @RequestBody StatsFilter statsFilter
     ) {
         try {
-            String results = staffBookmarkService.getStatsFile(statsFilter);
+            String results = staffBookmarkService.getStatsFile(statsFilter, ItechUserUtil.extractUserId(basicAuth));
             APIResponse<String> response = results == null ?
                     new APIResponse<>(new APIResponseHeader(APIResponseStatus.NOT_FOUND, "No record found"), null)
                     : new APIResponse<>(new APIListResponseHeader(APIResponseStatus.FOUND,  " record(s) found", 0, 0, 1), results);
@@ -125,10 +134,38 @@ public class testAPI {
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/api/download/{type}/{id}")
-    public ResponseEntity<byte[]> getFilePDF(@PathVariable(name = "id") Long id,
-                                             @PathVariable(name = "type") String type) {
+    @GetMapping("/download/{type}/{id}/{token}")
+    public ResponseEntity<byte[]> getFilePDF(@PathVariable(name = "id") String id,
+                                             @PathVariable(name = "type") String type,
+                                             @PathVariable(name = "token") String token) {
         try {
+
+            //token = token.substring(6);
+            token = new String(Base64.getDecoder().decode(token));
+            String[] arr = token.split(":");
+            Credential credential = new Credential();
+            credential.setUsername(arr[0]);
+            credential.setPassword(arr[1]);
+
+            if (type.equals("document")) {
+                DocumentGet document = documentService.getByUuid(id);
+
+                UserGet1 user = userService.login(credential);
+                if (!user.getRoles().stream().map(m -> m.getName()).collect(Collectors.toList()).contains("sysadmin")
+                        && !document.getAuthors().contains(user.getId())) {
+                    throw new APIAuthenticationException();
+                }
+            }
+            else {
+                InventionGet document = inventionService.getByUuid(id);
+
+                UserGet1 user = userService.login(credential);
+                if (!user.getRoles().stream().map(m -> m.getName()).collect(Collectors.toList()).contains("sysadmin")
+                        && !document.getAuthors().contains(user.getId())) {
+                    throw new APIAuthenticationException();
+                }
+            }
+
 
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set("X-Frame-Options", "SAMEORIGIN");
@@ -192,7 +229,7 @@ public class testAPI {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/api/download/{type}/{id}/byte")
-    public ResponseEntity<byte[]> getFilePDFByte(@PathVariable(name = "id") Long id,
+    public ResponseEntity<byte[]> getFilePDFByte(@PathVariable(name = "id") String id,
                                              @PathVariable(name = "type") String type) {
         try {
             return ResponseEntity.ok().body(staffBookmarkService.getPDFB(type, id));

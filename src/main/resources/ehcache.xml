@@ -109,6 +109,32 @@
         </resources>
     </cache>
 
+    <cache alias="inventionByUuid">
+        <key-type>java.lang.String</key-type>
+        <value-type>vn.com.mta.science.module.model.Invention</value-type>
+        <expiry>
+            <ttl unit="minutes">120</ttl>
+        </expiry>
+
+        <listeners dispatcher-thread-pool="pool-listeners">
+            <listener>
+                <class>vn.com.mta.science.config.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+
+        <resources>
+            <heap>50</heap>
+            <offheap unit="MB">20</offheap>
+        </resources>
+    </cache>
+
     <cache alias="authorCache">
         <key-type>java.lang.Long</key-type>
         <value-type>vn.com.mta.science.module.model.Author</value-type>

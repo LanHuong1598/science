@@ -10,12 +10,10 @@ import vn.com.itechcorp.base.exception.UnchangeableObjectException;
 import vn.com.itechcorp.base.repository.dao.PaginationInfo;
 import vn.com.itechcorp.base.repository.service.detail.impl.AuditableSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
-import vn.com.mta.science.module.user.filter.RoleFilter;
 import vn.com.mta.science.module.user.model.Role;
 import vn.com.mta.science.module.user.schema.RoleGet;
 import vn.com.mta.science.module.user.service.db.RoleDAO;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service("roleService")
@@ -36,14 +34,14 @@ public class RoleServiceImpl extends AuditableSchemaServiceImpl<RoleGet, Role, S
 
     @Override
     public List<RoleGet> getPageOfData(PaginationInfo pagingInfo) throws APIException {
-        RoleFilter filter = new RoleFilter(Collections.singletonList("sysadmin"));
-        return super.getPageOfData(filter, pagingInfo);
+        //RoleFilter filter = new RoleFilter(Collections.singletonList("sysadmin"));
+        return super.getPageOfData(null, pagingInfo);
     }
 
     @Override
     public long getCountAll() throws APIException {
-        RoleFilter filter = new RoleFilter(Collections.singletonList("sysadmin"));
-        return super.getCountAll(filter);
+        //RoleFilter filter = new RoleFilter(Collections.singletonList("sysadmin"));
+        return super.getCountAll();
     }
 
     @Override

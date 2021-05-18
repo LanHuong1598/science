@@ -12,18 +12,18 @@ import java.util.List;
 
 public interface StaffBookmarkService {
 
-    public ocr getImage(MultipartFile image) throws APIException, IOException, InterruptedException;
+    ocr getImage(MultipartFile image) throws APIException, IOException, InterruptedException;
 
-    public List<Menus> getDocumentTypeMenus() throws IOException;
+    List<Menus> getDocumentTypeMenus() throws IOException;
 
-    public Stats getStats(StatsFilter statsFilter) throws IOException;
+    Stats getStats(StatsFilter statsFilter, Long userId) throws IOException;
 
-    public String getPDF(String type, Long id) throws APIException, IOException, InterruptedException;
+    String getPDF(String type, String id) throws APIException, IOException, InterruptedException;
 
-    public void createSheet() throws Exception;
+    void createSheet() throws Exception;
 
-    public String getStatsFile(StatsFilter statsFilter) throws IOException ;
+    String getStatsFile(StatsFilter statsFilter, Long userId) throws IOException;
 
-    public byte[] getPDFB(String type, Long id) throws APIException, IOException;
+    byte[] getPDFB(String type, String id) throws APIException, IOException;
 
 }

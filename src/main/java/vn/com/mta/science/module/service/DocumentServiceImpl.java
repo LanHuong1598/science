@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.exception.APIException;
+import vn.com.itechcorp.base.exception.ObjectNotFoundException;
 import vn.com.itechcorp.base.repository.dao.PaginationInfo;
 import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
@@ -158,7 +159,11 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
 
     @Override
     public DocumentGet getByUuid(String uuid){
+        Document document = documentDAO.getByUuid(uuid);
+        if (document == null)
+            throw new ObjectNotFoundException();
         return convert(documentDAO.getByUuid(uuid));
+
     }
 
     @Override

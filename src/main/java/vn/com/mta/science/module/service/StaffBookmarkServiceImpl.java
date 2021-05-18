@@ -1,8 +1,8 @@
 package vn.com.mta.science.module.service;
 
-import org.apache.commons.collections4.ListUtils;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,15 +12,14 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vn.com.itechcorp.base.exception.APIException;
+import vn.com.itechcorp.base.exception.ObjectNotFoundException;
 import vn.com.itechcorp.base.repository.dao.PaginationInfo;
 import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.db.AffiliationDAO;
 import vn.com.mta.science.module.service.filter.*;
-import vn.com.mta.science.module.user.model.Role;
 import vn.com.mta.science.module.user.model.User;
 import vn.com.mta.science.module.user.service.db.UserDAO;
-import vn.com.mta.science.util.ItechAuthority;
 
 
 import javax.activation.DataHandler;
@@ -31,7 +30,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.security.sasl.AuthenticationException;
 import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -49,7 +47,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     public ocr getImage(MultipartFile image) throws APIException, IOException, InterruptedException {
 
         String uuid = UUID.randomUUID().toString();
-        String path = "/home/lanhuong/Documents/ORC/MTA_OCR_2020/server/" + uuid;
+        String path = "/home/lanhuong/Documents/ORC/front_model/server/" + uuid;
         File attachment = new File(path + ".jpg");
 
         BufferedOutputStream stream = new BufferedOutputStream(
@@ -59,13 +57,13 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
 
         ProcessBuilder processBuilder =
-                new ProcessBuilder("sh", "-c", "cd /home/lanhuong/Documents/ORC/MTA_OCR_2020/ && python test.py " + path + ".jpg");
+                new ProcessBuilder("sh", "-c", "cd /home/lanhuong/Documents/ORC/front_model/ && python test.py " + path + ".jpg");
         Process process = processBuilder.start();
         int exitCode = process.waitFor();
         assert exitCode == 0;
 
         Thread.sleep(1000);
-        File f = new File("/home/lanhuong/Documents/ORC/MTA_OCR_2020/result_image/" + uuid + ".jpg");
+        File f = new File("/home/lanhuong/Documents/ORC/front_model/result_image/" + uuid + ".jpg");
         String encodedString = Base64
                 .getEncoder()
                 .encodeToString(StreamUtils.copyToByteArray(new FileInputStream(f)));
@@ -73,7 +71,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         int i = 0;
         String idNo = "";
         String name = "";
-        FileInputStream fis = new FileInputStream("/home/lanhuong/Documents/ORC/MTA_OCR_2020/result_image/" + uuid + ".txt");
+        FileInputStream fis = new FileInputStream("/home/lanhuong/Documents/ORC/front_model/result_image/" + uuid + ".txt");
         Scanner scanner = new Scanner(fis);
 
         while (scanner.hasNextLine()) {
@@ -124,7 +122,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         paginationInfo.setMaxResults(1000);
         paginationInfo.setFirstRow(0);
 
-        List<DocumentTypeGet> res = new ArrayList<>() ; //= documentTypeService.getPageOfData(paginationInfo);
+        List<DocumentTypeGet> res = new ArrayList<>(); //= documentTypeService.getPageOfData(paginationInfo);
         res.add(documentTypeService.getById(1L));
         res.add(documentTypeService.getById(2L));
         res.add(documentTypeService.getById(10L));
@@ -178,14 +176,31 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     }
 
     @Override
-    public Stats getStats(StatsFilter statsFilter) throws IOException {
+    public Stats getStats(StatsFilter statsFilter, Long userId) throws IOException {
 
         Stats s = new Stats();
 
         DocumentFilter documentFilter = new DocumentFilter();
 
         if (statsFilter.getType().equals("khoa")) {
+            User user = userDAO.getById(userId);
+            if (user == null)
+                throw new ObjectNotFoundException();
 
+            Affiliation affiliation = affiliationDAO.getById(1L);
+            if (user.getAffiliation() != null)
+                affiliation = affiliationDAO.getById(user.getAffiliationId());
+
+            if (affiliation.getId() != 1L && affiliation.getParentId() != 1L) {
+                if (!user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("ROLE_TKHOA")
+                        && !user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("sysadmin"))
+                    throw new ObjectNotFoundException();
+
+                if (!user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("sysadmin") &&
+                        !affiliation.getId().equals(Long.valueOf(statsFilter.getKeyword()))
+                        && !affiliation.getParentId().equals(Long.valueOf(statsFilter.getKeyword())))
+                    throw new ObjectNotFoundException();
+            }
 
             AffiliationFilter affiliationFilter = new AffiliationFilter();
             affiliationFilter.setParentId(Long.valueOf(statsFilter.getKeyword()));
@@ -195,6 +210,24 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
         if (statsFilter.getType().equals("bomon")) {
 
+            User user = userDAO.getById(userId);
+            if (user == null)
+                throw new ObjectNotFoundException();
+
+            Affiliation affiliation = affiliationDAO.getById(user.getAffiliation().getId());
+
+            if (affiliation.getId() != 1L && affiliation.getParentId() != 1L) {
+                if (!user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("ROLE_TKHOA")
+                        && !user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("sysadmin")
+                        && !user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("ROLE_TBM"))
+                    throw new ObjectNotFoundException();
+            }
+
+            affiliation = affiliationDAO.getById(Long.valueOf(statsFilter.getKeyword()));
+            if (!user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("sysadmin")
+                    && !user.getAffiliation().equals(affiliation.getParentId())
+                    && !user.getAffiliation().equals(affiliation.getId()))
+                throw new ObjectNotFoundException();
 
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
@@ -202,6 +235,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         }
 
         if (statsFilter.getType().equals("tacgia")) {
+
             Set<String> aff = new HashSet<>();
             aff.add(statsFilter.getKeyword());
             documentFilter.setAuthorId(aff);
@@ -209,9 +243,23 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
         if (statsFilter.getType().equals("ncm")) {
 
+            User user = userDAO.getById(userId);
+            if (user == null)
+                throw new ObjectNotFoundException();
+
+            Affiliation affiliation = affiliationDAO.getById(user.getAffiliationId());
             Set<Long> aff = new HashSet<>();
             aff.add(Long.valueOf(statsFilter.getKeyword()));
             documentFilter.setGroupId(aff);
+            if (affiliation.getId() != 1L && affiliation.getParentId() != 1L) {
+                if (!user.getRoles().stream().map(m -> m.getId()).collect(Collectors.toList()).contains("sysadmin")) {
+                    if (user.getGroupId() != null && user.getGroupId().equals(Long.valueOf(statsFilter.getKeyword()))) {
+
+                    } else {
+                        throw new InvalidObjectException("");
+                    }
+                }
+            }
         }
 
         List<StatsByYear> list = new ArrayList<>();
@@ -219,13 +267,13 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
             StatsByYear statsByYear = new StatsByYear();
             statsByYear.setYear(year);
             documentFilter.setStarttime(year.toString());
-            documentFilter.setEndtime(year.toString()+ "-99-99");
+            documentFilter.setEndtime(year.toString() + "-99-99");
 
             // BBKH - ISI
             Set<Long> type = new HashSet<>();
             type.add(1L);
             Set<Long> classification = new HashSet<>();
-            classification.add(1L);
+            classification.add(2L);
             documentFilter.setDocumentType(type);
             documentFilter.setClassificationId(classification);
             Long r1 = documentService.getCountAll(documentFilter);
@@ -233,7 +281,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
             // BBKH - SCOPUS
             classification.clear();
-            classification.add(2L);
+            classification.add(1L);
             documentFilter.setDocumentType(type);
             documentFilter.setClassificationId(classification);
             r1 = documentService.getCountAll(documentFilter);
@@ -272,7 +320,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
             type.add(10L);
 
             classification.clear();
-            classification.add(2L);
+            classification.add(1L);
             documentFilter.setDocumentType(type);
             documentFilter.setClassificationId(classification);
             r1 = documentService.getCountAll(documentFilter);
@@ -282,6 +330,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
             classification.clear();
             classification.add(3L);
+            classification.add(2L);
             documentFilter.setDocumentType(type);
             documentFilter.setClassificationId(classification);
             r1 = documentService.getCountAll(documentFilter);
@@ -463,8 +512,8 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
     @Override
-    public String getStatsFile(StatsFilter statsFilter) throws IOException {
-        Stats stats = getStats(statsFilter);
+    public String getStatsFile(StatsFilter statsFilter, Long userId) throws IOException {
+        Stats stats = getStats(statsFilter, userId);
 
         BasicConfigurator.configure();
 
@@ -490,7 +539,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
             if (statsByYears.size() == 5)
                 template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_5years.docx");
-              else if (statsByYears.size() == 4)
+            else if (statsByYears.size() == 4)
                 template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_4years.docx");
             else if (statsByYears.size() == 3)
                 template = new File("E:\\Collection\\deploy\\backend\\baocao_template\\template1_3years.docx");
@@ -523,8 +572,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
             if (!statsFilter.getType().equals("tacgia")) {
                 Affiliation affiliation = affiliationDAO.getById(Long.valueOf(statsFilter.getKeyword()));
                 doc.replace(Pattern.compile("\\{TYPE}"), affiliation.getName().toUpperCase());
-            }
-            else{
+            } else {
                 doc.replace(Pattern.compile("\\{TYPE}"), statsFilter.getKeyword().toUpperCase());
             }
 
@@ -660,10 +708,10 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
 
 
     @Override
-    public String getPDF(String type, Long id) throws APIException, IOException {
+    public String getPDF(String type, String id) throws APIException, IOException {
 
-        if (!type.equals("invention")){
-            DocumentGet document = documentService.getById(id);
+        if (!type.equals("invention")) {
+            DocumentGet document = documentService.getByUuid(id);
 
             String base64File = "";
             File file = new File(document.getAttachmentsFullText().getUrl());
@@ -679,7 +727,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
             }
             return base64File;
         } else {
-            InventionGet inventionGet = inventionService.getById(id);
+            InventionGet inventionGet = inventionService.getByUuid(id);
             String base64File = "";
             File file = new File(inventionGet.getAttachmentsFullText().getUrl());
             try (FileInputStream imageInFile = new FileInputStream(file)) {
@@ -697,9 +745,16 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     }
 
     @Override
-    public byte[] getPDFB(String type, Long id) throws APIException, IOException {
-        DocumentGet document = documentService.getById(id);
-        File file = new File("/home/lanhuong/Occupational change and wage inequality European Jobs Monitor 2017 - ef1710en.pdf");
+    public byte[] getPDFB(String type, String id) throws APIException, IOException {
+        String url = "";
+        if (type.equals("document")) {
+            DocumentGet document = documentService.getByUuid(id);
+            url = document.getUrl();
+        } else {
+            InventionGet inventionGet = inventionService.getByUuid(id);
+            url = inventionGet.getUrl();
+        }
+        File file = new File(url);
         return StreamUtils.copyToByteArray(new FileInputStream(file));
     }
 
@@ -762,38 +817,5 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-//
-//        com.spire.doc.Document document = new Document("Don-de-nghi-Vu-sua-07.11.2020.docx");
-//        document.insertTextFromFile("Don-de-nghi-Vu-sua-07.11.2020(1).docx", FileFormat.Docx_2013);
-//        document.saveToFile("Output.docx", FileFormat.Docx_2013);
-//
-//        try {
-//            FileInputStream inputStream = new FileInputStream(
-//                    new File("/home/lanhuong/Downloads/science/JavaBooks.xlsx"));
-//            Workbook workbook = WorkbookFactory.create(inputStream);
-//
-//            Sheet sheet = workbook.getSheetAt(0);
-//            XSSFRow sheetrow = (XSSFRow) sheet.getRow(3);
-//            if (sheetrow == null) {
-//                sheetrow = (XSSFRow) sheet.createRow(3);
-//            }
-////Update the value of cell
-//            Cell cell = null;
-//            cell = sheetrow.getCell(3);
-//            if (cell == null) {
-//                cell = sheetrow.createCell(3);
-//            }
-//            cell.setCellValue("Pass");
-//
-//            inputStream.close();
-//
-//            FileOutputStream outputStream = new FileOutputStream("JavaBooks.xlsx");
-//            workbook.write(outputStream);
-//            workbook.close();
-//            outputStream.close();
-//
-//        } catch (IOException | EncryptedDocumentException ex) {
-//            ex.printStackTrace();
-//        }
     }
 }

@@ -38,4 +38,7 @@ public class Affiliation extends VoidableGeneratedIDEntry {
 
     @Column(name = "parent_id")
     private Long parentId;
+
+    @Column(name = "priority")
+    private Long priority;
 }

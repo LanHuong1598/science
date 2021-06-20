@@ -50,7 +50,7 @@ public class UserServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<UserGe
                     affiliation = affiliationDAO.getById(affiliation.getParentId());
                     if (affiliation != null) {
                         response.setAffiliationParentId(affiliation.getId());
-                        response.setAffiliationParentName(affiliation.getName());
+                        response.setAffiliationParentName(affiliation.getName() + " - " + response.getAffiliationName());
                     }
                 }
             }

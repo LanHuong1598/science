@@ -42,7 +42,7 @@ public class MetadataAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).AFFILIATION_GET)")
     @GetMapping("/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> getAffiliation() {
-        return affiliationMethods.getList("id", 0, 1000, true);
+        return affiliationMethods.getList("priority", 0, 1000, true);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -57,7 +57,7 @@ public class MetadataAPI {
     @PostMapping("/search/affiliation")
     public ResponseEntity<APIResponse<List<AffiliationGet>>> search(
             @Valid @RequestBody AffiliationFilter object) {
-        return affiliationMethods.search("id", 0, 1000,  true, object);
+        return affiliationMethods.search("priority", 0, 1000,  true, object);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -113,7 +113,7 @@ public class MetadataAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENTTYPE_GET)")
     @GetMapping("/document-type")
     public ResponseEntity<APIResponse<List<DocumentTypeGet>>> getAllDocumentGet() {
-        return documentTypeMethods.getList(null, 0, 0, true);
+        return documentTypeMethods.getList("priority", 0, 1000, true);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "

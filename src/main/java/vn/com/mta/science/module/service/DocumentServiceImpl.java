@@ -109,12 +109,11 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
         DocumentMemberFilter documentMemberFilter = new DocumentMemberFilter();
         documentMemberFilter.setDocumentId(document.getId());
         List<DocumentMember> documentMembers = documentMemberDAO.getPageOfData(documentMemberFilter, null);
-        if (documentMembers != null)
-        {
+        if (documentMembers != null) {
             documentGet.setAuthors(documentMembers.stream().map(DocumentMember::getAuthorId).collect(Collectors.toList()));
 
             documentGet.setAuthorsName(new ArrayList<>());
-            for (DocumentMember id : documentMembers){
+            for (DocumentMember id : documentMembers) {
                 Author author = authorDAO.getById(id.getAuthorId());
                 if (author != null) {
                     documentGet.getAuthorsName().add(author.getFullname());
@@ -158,7 +157,7 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
     }
 
     @Override
-    public DocumentGet getByUuid(String uuid){
+    public DocumentGet getByUuid(String uuid) {
         Document document = documentDAO.getByUuid(uuid);
         if (document == null)
             throw new ObjectNotFoundException();
@@ -195,7 +194,7 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
                 lt.setClassificationId(author);
             }
 
-            if (ft.getDocumentType() != null ) {
+            if (ft.getDocumentType() != null) {
                 Set<Long> author = new HashSet<>();
 
                 DocumentType documentType = documentTypeDAO.getById(ft.getDocumentType());
@@ -223,7 +222,7 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
                 lt.setGroupId(author);
             }
 
-            if (ft.getKeyword() != null && !ft.getKeyword().equals("") ) {
+            if (ft.getKeyword() != null && !ft.getKeyword().equals("")) {
 //                Set<String> author = new HashSet<>();
 //                author.add(ft.getKeyword());
                 lt.setKeyword(ft.getKeyword());
@@ -367,6 +366,33 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
             report.setKeyword(ss);
         }
 
+
+        try {
+            String str = report.getPublishDate();
+            if (str.length() == 4) {
+                str = str + ("-01-01");
+            } else if (str.length() <= 7) {
+                str = str + ("-01");
+            }
+            String[] arrOfStr = str.split("-");
+            if (arrOfStr.length >= 2) {
+
+                String s = "";
+                for (String ss : arrOfStr) {
+                    if (ss.length() < 2) {
+                        ss = "0" + ss;
+                        s = s + ss + "-";
+                    }
+                    else s = s + ss + "-";
+                    report.setPublishDate(s.substring(0, s.length() - 1));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new APIException();
+        }
+
         report = documentDAO.create(report, callerId);
 
         DocumentReplica documentReplica = new DocumentReplica(report);
@@ -502,20 +528,20 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
     }
 
     @Override
-    public void updatedb(){
+    public void updatedb() {
         List<Document> documents = documentDAO.getAll();
 
-        for (Document document : documents){
+        for (Document document : documents) {
             String str = document.getPublishDate();
             String[] arrOfStr = str.split("-");
-            if (arrOfStr.length >= 2){
-                if (arrOfStr[1].length() < 2){
+            if (arrOfStr.length >= 2) {
+                if (arrOfStr[1].length() < 2) {
                     arrOfStr[1] = "0" + arrOfStr[1];
                     String s = "";
-                    for (String ss : arrOfStr){
+                    for (String ss : arrOfStr) {
                         s = s + ss + "-";
                     }
-                    document.setPublishDate(s.substring(0, s.length()-1));
+                    document.setPublishDate(s.substring(0, s.length() - 1));
                     documentDAO.update(document, 0L);
                 }
             }

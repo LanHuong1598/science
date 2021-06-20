@@ -74,6 +74,7 @@ create table affiliation
     country           text,
     level             integer,
     parent_id         integer,
+    priority          integer ,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -282,6 +283,7 @@ create table document_type
     id                serial primary key,
     name              text,
     description       text,
+    priority          integer ,
 
     uuid              varchar(50)              not null,
     created_time      timestamp with time zone not null,
@@ -544,3 +546,60 @@ insert into role (id, name, authorities, uuid, created_time, last_updated_time) 
 ('ROLE_TKHOA','Trưởng khoa','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp),
 ('ROLE_TBM','Trưởng bộ môn','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp),
 ('tkcap2','TK cấp 2','DOCUMENT_GET,USER_GET,GROUP_GET,AUTHOR_GET,INVENTION_GET, AFFILIATION_GET, CLASSIFICATION_GET,DOCUMENTTYPE_GET,LANGUAGE_GET,DEGREE_GET,MAJOR_GET,CITED_GET,ROLE_GET', uuid_generate_v4(), current_timestamp, current_timestamp);
+
+
+
+-- update DB affiliation
+
+
+-- update DB degree
+
+update author
+set degree_id = degree_id + 1
+where degree_id <= 5
+
+update author
+set degree_id = 1
+where degree_id = 11
+
+-- update getAcademicRanks
+
+update author
+set degree_id = 7
+where degree_id = 10
+
+-- update degree
+delete from degree  where  id = 6 or id = 7;
+update degree set id = id + 100;
+update degree set id = id -100 + 1 where id <= 105;
+update degree set id = 1 where id = 111;
+update degree set id = 7 where id = 110;
+update degree set id = id -100  where id >= 108 and id <= 109;
+
+--
+update affiliation set priority = id;
+update affiliation set priority = 0 where id >= 108 and id >= 248;
+
+--
+update document
+set publish_date = CONCAT(publish_date, '-01-01')
+where length(publish_date) = 4;
+--
+
+update document
+set publish_date = CONCAT(publish_date, '-01')
+where length(publish_date) <=7
+
+--
+update document
+set publish_date = concat(LEFT(publish_date,length(publish_date)-2),'-0',  RIGHT(publish_date, 1))
+where LEFT(RIGHT( publish_date, 3),1) != '-'
+
+--
+update document
+set publish_date = concat(LEFT(publish_date,4),'-0', SUBSTRING(publish_date, 6,1), RIGHT(publish_date, 3))
+where LEFT(RIGHT( publish_date, 6),1) != '-'
+--
+
+
+

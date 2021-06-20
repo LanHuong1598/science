@@ -10,7 +10,9 @@ import vn.com.mta.science.module.model.*;
 import vn.com.mta.science.module.service.filter.DocumentFilter;
 
 import javax.persistence.criteria.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository("documentDAO")
@@ -46,7 +48,7 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
 
             if (filter.getStarttime() != null)
                 if (filter.getEndtime() != null) {
-                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Document_.PUBLISH_DATE), filter.getStarttime(), filter.getEndtime() + "-99-99"));
+                    predicates.add(criteriaInfo.getBuilder().between(criteriaInfo.getRoot().get(Document_.PUBLISH_DATE), filter.getStarttime(), filter.getEndtime()));
                 }
 
             if (filter.getAuthorId() != null && !filter.getAuthorId().isEmpty()) {

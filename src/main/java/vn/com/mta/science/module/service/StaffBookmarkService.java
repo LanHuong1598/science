@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface StaffBookmarkService {
 
-    ocr getImage(MultipartFile image) throws APIException, IOException, InterruptedException;
-
     List<Menus> getDocumentTypeMenus() throws IOException;
 
     Stats getStats(StatsFilter statsFilter, Long userId) throws IOException;

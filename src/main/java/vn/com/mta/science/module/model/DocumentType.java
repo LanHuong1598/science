@@ -18,4 +18,7 @@ public class DocumentType extends AuditableGeneratedIDEntry {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "priority")
+    private Long priority;
 }

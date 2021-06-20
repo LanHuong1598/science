@@ -44,61 +44,6 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     @Value("${app.image}")
     private String imagePath;
 
-    public ocr getImage(MultipartFile image) throws APIException, IOException, InterruptedException {
-
-        String uuid = UUID.randomUUID().toString();
-        String path = "/home/lanhuong/Documents/ORC/front_model/server/" + uuid;
-        File attachment = new File(path + ".jpg");
-
-        BufferedOutputStream stream = new BufferedOutputStream(
-                new FileOutputStream(attachment));
-        FileCopyUtils.copy(image.getInputStream(), stream);
-        stream.close();
-
-
-        ProcessBuilder processBuilder =
-                new ProcessBuilder("sh", "-c", "cd /home/lanhuong/Documents/ORC/front_model/ && python test.py " + path + ".jpg");
-        Process process = processBuilder.start();
-        int exitCode = process.waitFor();
-        assert exitCode == 0;
-
-        Thread.sleep(1000);
-        File f = new File("/home/lanhuong/Documents/ORC/front_model/result_image/" + uuid + ".jpg");
-        String encodedString = Base64
-                .getEncoder()
-                .encodeToString(StreamUtils.copyToByteArray(new FileInputStream(f)));
-
-        int i = 0;
-        String idNo = "";
-        String name = "";
-        FileInputStream fis = new FileInputStream("/home/lanhuong/Documents/ORC/front_model/result_image/" + uuid + ".txt");
-        Scanner scanner = new Scanner(fis);
-
-        while (scanner.hasNextLine()) {
-            if (i == 0) idNo = scanner.nextLine();
-            if (i == 1) name = scanner.nextLine();
-            i++;
-            if (i > 1) break;
-        }
-
-        scanner.close();
-
-        ocr ocr = new ocr(encodedString, idNo, name);
-
-        return ocr;
-
-
-//        String command = " cd /home/lanhuong/OCR/id ; conda activate tfmax;  python id-detector.py '/home/lanhuong/OCR/id/test_set/2b395a1180091adc087fe2fba491f920.jpeg'";
-//        try {
-//            Process process = Runtime.getRuntime().exec(command);
-//            process.waitFor();
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-//        return null;
-    }
-
     @Autowired
     DocumentTypeService documentTypeService;
 
@@ -202,6 +147,8 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
                     throw new ObjectNotFoundException();
             }
 
+            // lay danh sach bo mon
+
             AffiliationFilter affiliationFilter = new AffiliationFilter();
             affiliationFilter.setParentId(Long.valueOf(statsFilter.getKeyword()));
             List<Affiliation> affiliations = affiliationDAO.getPageOfData(affiliationFilter, null);
@@ -263,11 +210,22 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
         }
 
         List<StatsByYear> list = new ArrayList<>();
-        for (Long year = statsFilter.getStarttime(); year <= statsFilter.getEndtime(); year++) {
+
+        Long starttime = Long.valueOf(statsFilter.getStarttime().split("-")[0]);
+        Long endtime = Long.valueOf(statsFilter.getEndtime().split("-")[0]);
+
+        for (Long year = starttime; year <= endtime; year++) {
             StatsByYear statsByYear = new StatsByYear();
             statsByYear.setYear(year);
             documentFilter.setStarttime(year.toString());
             documentFilter.setEndtime(year.toString() + "-99-99");
+            if (year.equals(Long.valueOf(statsFilter.getStarttime().split("-")[0]))){
+                documentFilter.setStarttime(statsFilter.getStarttime());
+            }
+            else if (year.equals( Long.valueOf(statsFilter.getEndtime().split("-")[0]))){
+                documentFilter.setEndtime(statsFilter.getEndtime());
+            }
+
 
             // BBKH - ISI
             Set<Long> type = new HashSet<>();

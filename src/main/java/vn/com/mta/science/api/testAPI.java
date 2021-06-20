@@ -49,23 +49,6 @@ public class testAPI {
     InventionService inventionService;
 
     @PreAuthorize("permitAll()")
-    @PostMapping("/test")
-    public ResponseEntity<ocr> test(@Valid @RequestBody MultipartFile multipartFile) {
-        try {
-            return ResponseEntity.ok().body(staffBookmarkService.getImage(multipartFile));
-        } catch (ObjectNotFoundException ex) {
-            logger.error(ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } catch (APIAuthenticationException ex) {
-            logger.error(ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PreAuthorize("permitAll()")
     @GetMapping("/stats")
     public ResponseEntity<APIResponse<List<Menus>>> test() {
         try {

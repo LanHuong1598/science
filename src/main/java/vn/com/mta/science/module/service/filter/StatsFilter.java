@@ -9,9 +9,9 @@ import vn.com.itechcorp.base.repository.filter.BaseFilter;
 @Setter
 @NoArgsConstructor
 public class StatsFilter implements BaseFilter {
-    private Long starttime;
+    private String starttime;
 
-    private Long endtime;
+    private String endtime;
 
     private String type ;
 

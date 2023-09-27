@@ -68,7 +68,7 @@ public class Document extends VoidableGeneratedIDEntry {
     private String link;
 
     @Column(name = "mta_jounal_id")
-    private Long mtaJournalId;
+    private String mtaJournalId;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "document_member",

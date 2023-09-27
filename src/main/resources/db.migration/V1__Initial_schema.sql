@@ -316,7 +316,7 @@ create table document
     keyword           text,
     link              text,
 
-    mta_jounal_id     integer ,
+    mta_jounal_id     text ,
 
 
     uuid              varchar(50)              not null,
@@ -510,7 +510,7 @@ create table document_replica
     cited_number      integer default 0,
     keyword           text,
 
-    mta_jounal_id     integer ,
+    mta_jounal_id     text ,
 
     nganh_id          integer ,
     chuyennganh_id    integer ,

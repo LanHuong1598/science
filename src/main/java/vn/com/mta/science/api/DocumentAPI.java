@@ -1,5 +1,6 @@
 package vn.com.mta.science.api;
 
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,12 @@ import vn.com.itechcorp.base.api.response.APIResponse;
 import vn.com.mta.science.module.model.Document;
 import vn.com.mta.science.module.schema.*;
 import vn.com.mta.science.module.service.DocumentService;
+import vn.com.mta.science.module.service.filter.DocumentFilter;
+import vn.com.mta.science.module.service.filter.DocumentGetFilter;
 import vn.com.mta.science.module.service.filter.DocumentTotalFilter;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -39,8 +43,10 @@ public class DocumentAPI {
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
             + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_GET)")
     @GetMapping("/document")
-    public ResponseEntity<APIResponse<List<DocumentGet>>> getAllDocument() {
-        return documentMethods.getList("id", 0, 100000, false);
+    public ResponseEntity<APIResponse<List<DocumentGet>>> getAllDocument(
+            @RequestParam(required = false, name = "offset", defaultValue = "1") int offset,
+            @RequestParam(required = false, name = "limit", defaultValue = "10") int limit) {
+        return documentMethods.getList("id", Math.max(offset - 1, 0), limit, false);
     }
 
     @PreAuthorize("hasAnyAuthority(T(vn.com.mta.science.util.ItechAuthority).SYSADMIN, "
@@ -62,8 +68,16 @@ public class DocumentAPI {
             + "T(vn.com.mta.science.util.ItechAuthority).DOCUMENT_GET)")
     @PostMapping("/document/search")
     public ResponseEntity<APIResponse<List<DocumentGet>>> findDocument(
-            @Valid @RequestBody DocumentTotalFilter object) {
-        return documentMethods.search("id", 0, 100000, false, object);
+    @RequestParam(required = false, name = "documenttype", defaultValue = "12") Long documenttype,
+    @RequestParam(required = false, name = "keyword", defaultValue = "") String keyword,
+    @RequestParam(required = false, name = "offset", defaultValue = "1") int offset,
+    @RequestParam(required = false, name = "limit", defaultValue = "10") int limit)
+    {
+
+        DocumentFilter ob = new DocumentFilter();
+        ob.setDocumentType(Collections.singleton(documenttype));
+        ob.setKeyword(keyword);
+        return documentMethods.search("id", Math.max(offset - 1, 0), limit, false, ob);
     }
 
 

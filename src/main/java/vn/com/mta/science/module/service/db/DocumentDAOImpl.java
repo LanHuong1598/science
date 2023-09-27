@@ -62,7 +62,7 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
                 }
             }
 
-            if (filter.getKeyword() != null) {
+            if (filter.getKeyword() != null && !filter.getKeyword().equals("")) {
                 predicates.add(criteriaInfo.getBuilder().like(criteriaInfo.getRoot().get(Document_.KEYWORD),
                         "%" + filter.getKeyword() + "%"));
             }
@@ -80,46 +80,4 @@ public class DocumentDAOImpl extends VoidableDAOHbnImpl<Document, Long> implemen
 
         return null;
     }
-
-    @Override
-    @CacheEvict(value = "documentCache", key = "#entity.id")
-    public Document create(Document entity, Long callerId) {
-        return super.create(entity, callerId);
-    }
-
-    @Override
-    @Cacheable(value = "documentCache", key = "#id", unless = "#result == null")
-    public Document getById(Long id) {
-        return super.getById(id);
-    }
-
-    @Override
-    @CacheEvict(value = "documentCache", key = "#entity.id")
-    public Document update(Document entity, Long callerId) {
-        return super.update(entity, callerId);
-    }
-
-    @Override
-    @CacheEvict(value = "documentCache", key = "#entity.id")
-    public void delete(Document entity, Long callerId) {
-        super.delete(entity, callerId);
-    }
-
-    @Override
-    @CacheEvict(value = "documentCache", key = "#entity.id")
-    public Document voids(Document entity, Long callerId, String reason) {
-        return super.voids(entity, callerId, reason);
-    }
-
-    @Override
-    @Cacheable(value = "documentByUuid", key = "#uuid", unless = "#result == null")
-    public Document getByUuid(String uuid) {
-        CriteriaInfo criteriaInfo = getBaseCriteriaInfo();
-        criteriaInfo.getCriteria().where(criteriaInfo.getBuilder().equal(criteriaInfo.getRoot().get(Document_.UUID), uuid));
-
-        List<Document> results = getSession().createQuery(criteriaInfo.getCriteria()).getResultList();
-        if (results == null || results.isEmpty()) return null;
-        return results.get(0);
-    }
-
 }

@@ -20,17 +20,22 @@
 		<jpamodelgen.version>5.4.12.Final</jpamodelgen.version>
 		<swagger.version>2.9.2</swagger.version>
 		<oauth2.version>2.3.3.RELEASE</oauth2.version>
-	</properties>
-	<repositories>
-		<repository>
-			<id>com.e-iceblue</id>
-			<name>e-iceblue</name>
-			<url>http://repo.e-iceblue.com/nexus/content/groups/public/</url>
-		</repository>
+	</properties><repositories>
+	<repository>
+		<id>com.e-iceblue</id>
+		<name>e-iceblue</name>
+		<url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
+	</repository>
 	</repositories>
 
-	<dependencies>
 
+
+	<dependencies>
+		<dependency>
+			<groupId>e-iceblue</groupId>
+			<artifactId>spire.doc</artifactId>
+			<version>11.4.2</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -60,6 +65,7 @@
 			<artifactId>spire.office.free</artifactId>
 			<version>3.9.0</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -148,6 +154,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

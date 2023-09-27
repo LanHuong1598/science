@@ -48,7 +48,7 @@ public class DocumentCreate extends GeneratedIDSchemaCreate<Document> {
 
     private String link;
 
-    private Long mtaJournalId;
+    private String mtaJournalId;
 
     private MultipartFile attachmentsFullText;
 

@@ -3,6 +3,8 @@ package vn.com.mta.science.module.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.com.itechcorp.base.exception.APIException;
+import vn.com.itechcorp.base.repository.dao.PaginationInfo;
+import vn.com.itechcorp.base.repository.filter.BaseFilter;
 import vn.com.itechcorp.base.repository.service.detail.impl.VoidableGeneratedIDSchemaServiceImpl;
 import vn.com.itechcorp.base.repository.service.detail.schema.GeneratedIDSchemaCreate;
 import vn.com.itechcorp.base.repository.service.detail.schema.SchemaUpdate;
@@ -13,9 +15,7 @@ import vn.com.mta.science.module.service.db.*;
 import vn.com.mta.science.module.service.filter.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
@@ -71,18 +71,16 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
                 authorGet.setDonvi(donvi);
 
             }
-        }
-        else {
+        } else {
             authorGet.setDonvi(author.getDepthResearch());
         }
 
-        if (author.getMajorId() != null)
-        {
+        if (author.getMajorId() != null) {
             Major chuyennganh = majorDAO.getById(author.getMajorId());
             if (chuyennganh != null) {
-                if (chuyennganh.getParentId() != null && chuyennganh.getParentId() != 0){
+                if (chuyennganh.getParentId() != null && chuyennganh.getParentId() != 0) {
                     Major nganh = majorDAO.getById(chuyennganh.getParentId());
-                    if (nganh != null){
+                    if (nganh != null) {
                         authorGet.setParentMajorId(nganh.getId());
                     }
                 }
@@ -135,18 +133,18 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
         filter.setAuthorId(object.getId());
         List<GroupMember> groups = groupMemberDAO.getPageOfData(filter, null);
         if (groups != null)
-        for (GroupMember groupMember : groups) {
-            groupMemberDAO.delete(groupMember, 0L);
-        }
+            for (GroupMember groupMember : groups) {
+                groupMemberDAO.delete(groupMember, 0L);
+            }
 
         EmailAuthorFilter emailAuthorFilter = new EmailAuthorFilter();
 
         emailAuthorFilter.setAuthorId(object.getId());
         List<Email> emails = emailDAO.getPageOfData(emailAuthorFilter, null);
         if (emails != null)
-        for (Email email : emails) {
-            emailDAO.delete(email, 0L);
-        }
+            for (Email email : emails) {
+                emailDAO.delete(email, 0L);
+            }
 
         if (object.getGroupIds() != null && !object.getGroupIds().isEmpty())
             for (Long id : object.getGroupIds()) {
@@ -198,4 +196,14 @@ public class AuthorServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Auth
         if (result.size() == 0) return new Pair<>(null, 0L);
         return new Pair<>(result, (long) result.size());
     }
+
+    @Override
+    public List<AuthorGet> getPageOfData(BaseFilter filter, PaginationInfo pageinfo) {
+        if (filter instanceof AuthorFilterByName) {
+            int u = (int) super.getCountAll(filter);
+            return super.getPageOfData(filter, pageinfo);
+        }
+        return null;
+    }
+
 }

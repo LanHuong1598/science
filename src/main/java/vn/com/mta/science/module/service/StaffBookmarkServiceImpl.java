@@ -3,7 +3,7 @@ package vn.com.mta.science.module.service;
 import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -473,7 +473,7 @@ public class StaffBookmarkServiceImpl implements StaffBookmarkService {
     public String getStatsFile(StatsFilter statsFilter, Long userId) throws IOException {
         Stats stats = getStats(statsFilter, userId);
 
-        BasicConfigurator.configure();
+//        BasicConfigurator.configure();
 
         List<StatsByYear> list = stats.getDs();
 

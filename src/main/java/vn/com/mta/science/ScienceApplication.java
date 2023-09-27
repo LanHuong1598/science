@@ -12,44 +12,42 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import vn.com.mta.science.config.interceptor.HibernateStatisticsInterceptor;
 
 import javax.sql.DataSource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @EnableCaching // Add this
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class)
 public class ScienceApplication {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
 //		StaffBookmarkServiceImpl service = new StaffBookmarkServiceImpl();
 //		service.createSheet(args);
 
-		SpringApplication.run(ScienceApplication.class, args);
+        SpringApplication.run(ScienceApplication.class, args);
 
-	}
+    }
 
-	@Autowired
-	protected DataSource dataSource;
+    @Autowired
+    protected DataSource dataSource;
 
-	@Bean
-	public LocalSessionFactoryBean sessionFactory() {
-		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-		sessionFactory.setDataSource(dataSource);
-		sessionFactory.setEntityInterceptor(statisticsInterceptor());
-		sessionFactory.setPackagesToScan("vn.com.mta.science");
-		return sessionFactory;
-	}
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setEntityInterceptor(statisticsInterceptor());
+        sessionFactory.setPackagesToScan("vn.com.mta.science");
+        return sessionFactory;
+    }
 
-	@Bean
-	public HibernateTransactionManager transactionManager() {
-		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-		transactionManager.setSessionFactory(sessionFactory().getObject());
-		return transactionManager;
-	}
+    @Bean
+    public HibernateTransactionManager transactionManager() {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(sessionFactory().getObject());
+        return transactionManager;
+    }
 
-	@Bean
-	public HibernateStatisticsInterceptor statisticsInterceptor() {
-		return new HibernateStatisticsInterceptor();
-	}
+    @Bean
+    public HibernateStatisticsInterceptor statisticsInterceptor() {
+        return new HibernateStatisticsInterceptor();
+    }
 }

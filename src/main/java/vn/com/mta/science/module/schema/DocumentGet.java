@@ -61,7 +61,7 @@ public class DocumentGet extends SchemaGet<Document, Long> {
 
     private String link;
 
-    private Long mtaJournalId;
+    private String mtaJournalId;
 
     private String mtaJournalName;
 

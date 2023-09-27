@@ -66,7 +66,7 @@ public class DocumentReplica extends AuditableDbEntry<Long> {
     private Long keyword;
 
     @Column(name = "mta_jounal_id")
-    private Long mtaJournalId;
+    private String mtaJournalId;
 
     @Column(name = "nganh_id")
     private Long nganhId;

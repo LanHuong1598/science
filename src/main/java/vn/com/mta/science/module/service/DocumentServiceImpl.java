@@ -289,6 +289,39 @@ public class DocumentServiceImpl extends VoidableGeneratedIDSchemaServiceImpl<Do
             return super.getPageOfData(lt, pageinfo);
 
         }
+        else  if (filter instanceof DocumentGetFilter)   {
+
+            DocumentGetFilter ft = (DocumentGetFilter) filter;
+
+            DocumentFilter lt = new DocumentFilter();
+
+            if (ft.getDocumentType() != null) {
+                Set<Long> author = new HashSet<>();
+
+                DocumentType documentType = documentTypeDAO.getById(ft.getDocumentType());
+                if (documentType != null) {
+                    if (documentType.getName().equals("--")) {
+                        author.addAll(documentTypeDAO.getAll().stream().map(DocumentType::getId).collect(Collectors.toList()));
+                    }
+                }
+
+                author.add(ft.getDocumentType());
+                lt.setDocumentType(author);
+            }
+
+            if (ft.getKeyword() != null && !ft.getKeyword().equals("")) {
+//                Set<String> author = new HashSet<>();
+//                author.add(ft.getKeyword());
+                lt.setKeyword(ft.getKeyword());
+            }
+
+            return super.getPageOfData(lt, pageinfo);
+        }
+        if (filter instanceof DocumentFilter){
+int u = (int) super.getCountAll(filter);
+            return super.getPageOfData(filter, pageinfo);
+
+        }
         return null;
     }
 
